@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+:root{
+    --light-hover: #edf0f5;
+}
+
+
+html, body{
+    background-color: aliceblue;
+}

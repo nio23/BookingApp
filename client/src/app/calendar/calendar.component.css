@@ -1,0 +1,65 @@
+:root {
+    --dark-body: #4d4c5a;
+    --dark-main: #141529;
+    --dark-second: #79788c;
+    --dark-hover: #323048;
+    --dark-text: #f8fbff;
+
+    --light-body: #f3f8fe;
+    --light-main: #fdfdfd;
+    --light-second: #c3c2c8;
+    --light-hover: #edf0f5;
+    --light-text: #151426;
+
+    --blue: #0000ff;
+    --white: #fff;
+
+}
+
+
+.calendar {
+    padding: 20px;
+    overflow: hidden;
+    background-color: white;
+    border-radius: 30px;
+    font-family: cursive;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+
+.month:hover {
+    background-color: var(--light-hover);
+    border-radius: 30%;
+}
+
+.year-change {
+    cursor: pointer;  
+    margin: 0 10px;
+    padding: 0 15px;
+    border-radius: 50%;
+    font-size: 1em;
+}
+
+.year-change:hover {
+    background-color: var(--light-hover);
+}
+
+.calendar-days .col {
+    border: 1px solid rgba(181, 210, 255, 0.541);
+}
+
+.calendar-days .col:hover {
+    background-color: var(--light-hover);
+}
+
+.calendar-days ul{
+    list-style-type: none;
+}
+
+.calendar-days .row{
+    margin: 0;
+}
+
+.day{
+    padding: 30px;
+}
