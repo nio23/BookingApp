@@ -1,19 +1,20 @@
 import { NgFor } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [NgFor],
+  imports: [NgFor, BsDropdownModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent implements OnInit {
 
   months = ["January", "February", "March", "April", "May", "June", "July",
-            "August", "September", "October", "November", "December"]
+            "August", "September", "October", "November", "December"];
+  
   date = new Date();
-
   year = this.date.getFullYear();
   monthNumb:number = this.date.getMonth();
   monthStr:string = this.months[this.monthNumb];
@@ -29,7 +30,10 @@ export class CalendarComponent implements OnInit {
 
   generateCalendar(){
     for (let i = 0; i < this.weeks; i++) {
-      this.weeksArray.push(Array.from({length: 7}, (_, index) => i*7+(index+1)));
+      this.weeksArray.push(Array.from({length: 7}, (_, index) => {
+        var date = i*7+(index+1);
+        return date<this.lastDateofMonth ? date : "";
+      }))
     }
   }
 
