@@ -8,7 +8,9 @@
                 </button>
                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
                     role="menu" aria-labelledby="button-basic">
-                  <li *ngFor="let month of months; let i=index" role="menuitem"><a class="dropdown-item" href="#">{{month}}</a></li>
+                    @for (month of months; track $index) {
+                        <li role="menuitem"><a class="dropdown-item" href="#" (click)="changeMonth($index)">{{month}}</a></li>
+                    }
                 </ul>
               </div>
         </div>
@@ -31,6 +33,15 @@
             <div class="col">Sat</div>
         </div>
         <div class="calendar-days row">
+            <!-- @for (week of weeksArray(); track week){
+                @for (day of week; track $index){
+                <ul class="row">
+                    <li class="col day">
+                        {{day}}
+                    </li>
+                </ul>
+            }
+            } -->
             <ul *ngFor="let week of weeksArray; let i = index" class="row">
                 <li *ngFor="let day of week; let dayIndex = index" class="col day">
                     {{day}}
