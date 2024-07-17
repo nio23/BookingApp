@@ -63,3 +63,7 @@
 .day{
     padding: 30px;
 }
+
+.dropdown-item{
+    cursor: pointer;
+}

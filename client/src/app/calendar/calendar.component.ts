@@ -1,5 +1,5 @@
 import { NgFor } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, Signal, signal } from '@angular/core';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { of } from 'rxjs';
 
@@ -15,52 +15,54 @@ export class CalendarComponent implements OnInit {
   months = ["January", "February", "March", "April", "May", "June", "July",
             "August", "September", "October", "November", "December"];
   
-  date = new Date();
-  year = this.date.getFullYear();
-
+  date = signal(new Date());
   //Month from 0..11
-  monthNumb:number = this.date.getMonth();
-  monthStr:string = this.months[this.monthNumb];
-  firstDayOfMonth = new Date(this.year, this.monthNumb, 1).getDay();
-  lastDateofMonth = new Date(this.year, this.monthNumb + 1, 0).getDate();
-  //daysOfMonth = Array.from({length:this.lastDateofMonth},(_,i)=> i+1);
+  monthNumb: Signal<number> = computed(()=> this.date().getMonth());
+  monthStr: Signal<string> = computed(() => this.months[this.monthNumb()]);
+
   weeks: number = 5;
   weeksArray:any = [];
 
+  constructor(){
+    effect(()=>{
+      this.generateCalendar();
+    })
+  }
+
   ngOnInit(): void {
-    this.generateCalendar();
+
   }
 
   generateCalendar(){
+    let firstDayOfWeek: number =  new Date(this.date().getFullYear(), this.monthNumb(), 1).getDay();
+    let lastDateofMonth: number =  new Date(this.date().getFullYear(), this.monthNumb() + 1, 0).getDate();
+    let lastDateOfPreviousMonth: number = new Date(this.date().getFullYear(), this.monthNumb(), 0).getDate();
     this.weeksArray = [];
-    let curDay = 1;
+    let day = 1;
+    let firstDayOfPreviousMonth = lastDateOfPreviousMonth - firstDayOfWeek + 1
+    let firstDayOfNextMonth = 1;
     for (let i = 0; i < this.weeks; i++) {
       this.weeksArray.push(Array.from({length: 7}, (_, index) => {
-        var date = i*7+(index);
-        return ( date >= this.firstDayOfMonth && date<=this.lastDateofMonth) ? curDay++ : "";
+        let date = i*7+(index);
+        if(date >= firstDayOfWeek && day <= lastDateofMonth)
+          return day++;
+        if(date < firstDayOfWeek)
+          return firstDayOfPreviousMonth++;
+        return firstDayOfNextMonth++;
       }))
     }
-    console.log(this.firstDayOfMonth);
-    console.log(this.weeksArray);
   }
 
   nextYear(){
-    this.year = this.year+1;
+    this.date.update(value => value = new Date(value.getFullYear()+1, value.getMonth()));
   }
 
   prevYear(){
-    this.year = this.year-1;
+    this.date.update(value => value = new Date(value.getFullYear()-1, value.getMonth()));
   }
 
-  changeMonth(month:number){
-    this.monthNumb = month;
-    this.monthStr = this.months[this.monthNumb]
-    this.calcFirstDayOfMonth();
-    this.generateCalendar();
-  }
-
-  calcFirstDayOfMonth(){
-    this.firstDayOfMonth = new Date(this.year, this.monthNumb, 1).getDay();
+  changeMonth(selectedMonth:number){
+    this.date.update(value => value = new Date(value.getFullYear(), selectedMonth));
   }
 
 }

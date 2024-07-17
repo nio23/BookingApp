@@ -4,19 +4,19 @@
             <div class="btn-group" dropdown>
                 <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
                         aria-controls="dropdown-basic">
-                  {{monthStr}} <span class="caret"></span>
+                  {{monthStr()}} <span class="caret"></span>
                 </button>
                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
                     role="menu" aria-labelledby="button-basic">
                     @for (month of months; track $index) {
-                        <li role="menuitem"><a class="dropdown-item" href="#" (click)="changeMonth($index)">{{month}}</a></li>
+                        <li role="menuitem"><a class="dropdown-item" (click)="changeMonth($index)">{{month}}</a></li>
                     }
                 </ul>
               </div>
         </div>
         <div class="year col text-end align-items-center">
             <button class="btn btn-light year-change" (click)="prevYear()"><</button>
-            <span class="year">{{year}}</span>
+            <span class="year">{{date().getFullYear()}}</span>
             <button class="btn btn-light year-change" (click)="nextYear()">></button>
         
         </div>
