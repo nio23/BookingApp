@@ -27,6 +27,7 @@
 }
 
 
+
 .month:hover {
     background-color: var(--light-hover);
     border-radius: 30%;
@@ -56,14 +57,27 @@
     list-style-type: none;
 }
 
-.calendar-days .row{
-    margin: 0;
-}
 
-.day{
-    padding: 30px;
+
+:host ::ng-deep .bs-datepicker-body td:hover{
+    background-color: var(--light-hover);
 }
 
 .dropdown-item{
     cursor: pointer;
+}
+
+
+:host ::ng-deep .bs-datepicker-body span{
+    border-radius: 0%;
+    padding: 40px;
+    border: 1px solid rgba(198, 255, 187, 0.596);
+    text-align: center;
+    width: inherit !important;
+    height: inherit !important;
+    line-height: 0px !important;
+}
+
+:host ::ng-deep .bs-datepicker-body span:hover{
+    background-color: transparent;
 }
