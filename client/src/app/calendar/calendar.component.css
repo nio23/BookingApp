@@ -17,67 +17,25 @@
 }
 
 
-.calendar {
-    padding: 20px;
-    overflow: hidden;
-    background-color: white;
+:host ::ng-deep .bs-datepicker {
     border-radius: 30px;
-    font-family: cursive;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
-
-
-
-.month:hover {
-    background-color: var(--light-hover);
-    border-radius: 30%;
-}
-
-.year-change {
-    cursor: pointer;  
-    margin: 0 10px;
-    padding: 0 15px;
-    border-radius: 50%;
-    font-size: 1em;
-}
-
-.year-change:hover {
-    background-color: var(--light-hover);
-}
-
-.calendar-days .col {
-    border: 1px solid rgba(181, 210, 255, 0.541);
-}
-
-.calendar-days .col:hover {
-    background-color: var(--light-hover);
-}
-
-.calendar-days ul{
-    list-style-type: none;
-}
-
-
 
 :host ::ng-deep .bs-datepicker-body td:hover{
     background-color: var(--light-hover);
 }
 
-.dropdown-item{
-    cursor: pointer;
-}
-
-
-:host ::ng-deep .bs-datepicker-body span{
+:host ::ng-deep .bs-datepicker-body td{
     border-radius: 0%;
     padding: 40px;
     border: 1px solid rgba(198, 255, 187, 0.596);
     text-align: center;
-    width: inherit !important;
-    height: inherit !important;
-    line-height: 0px !important;
 }
-
+:host ::ng-deep .bs-datepicker-body span {
+    vertical-align: middle;
+    display: inline-block;
+}
 :host ::ng-deep .bs-datepicker-body span:hover{
     background-color: transparent;
 }
+
