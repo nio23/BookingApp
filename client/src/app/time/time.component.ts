@@ -12,9 +12,11 @@ import { FormsModule } from '@angular/forms';
 export class TimeComponent {
   selectedDate = input.required<Date>();
   isDisabled: Signal<boolean> = computed(() => {
-    if(this.selectedDate() > new Date())
-      return false;
-    return true; 
+    let currentDate = new Date();
+    currentDate.setMinutes(0);
+    if(this.selectedDate() < currentDate)
+      return true;
+    return false; 
   });
 
   displayTime: Signal<Date> = computed(() =>{
@@ -31,7 +33,7 @@ export class TimeComponent {
     
   maxTime:  Signal<Date> = computed(() =>{
     let d = new Date(this.selectedDate());
-    d.setHours(22, 0, 0);
+    d.setHours(22, 1, 0);
     return d;
   });
 
