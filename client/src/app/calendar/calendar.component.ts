@@ -1,14 +1,16 @@
-import { Component, OnInit, signal, TemplateRef, ViewChild } from '@angular/core';
+import { Component, computed, effect, OnInit, Signal, signal, TemplateRef, ViewChild } from '@angular/core';
 import { BsDatepickerModule, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject, debounceTime, skip } from 'rxjs';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NgIf } from '@angular/common';
 import { TimeComponent } from "../time/time.component";
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [BsDatepickerModule, NgIf, TimeComponent],
+  imports: [BsDatepickerModule, NgIf, TimeComponent, FormsModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })
@@ -18,17 +20,21 @@ export class CalendarComponent implements OnInit {
   modalRef?: BsModalRef;
   datePickerConfig: Partial<BsDatepickerConfig>;
   bsInlineValue = new BehaviorSubject<Date>(new Date());
-  bsInlineValue$ = this.bsInlineValue.asObservable();
+  //bsInlineValue$ = this.bsInlineValue.asObservable();
   //Skips the first two emmssions when creating the component
   selectedDate = signal(new Date());
   
 
   constructor(private modalService: BsModalService){
-    this.datePickerConfig = Object.assign({}, { showWeekNumbers: false })
+    this.datePickerConfig = Object.assign({}, { showWeekNumbers: false})
+    effect(()=> console.log(this.selectedDate()));
   }
 
-  onValueChange(selected: Date){
-    this.bsInlineValue.next(selected);
+  onDateChange(selected: Date){
+    //this.bsInlineValue.next(selected);
+    let d = new Date();
+    selected.setHours(d.getHours(), d.getMinutes(), d.getSeconds());
+    this.selectedDate.set(selected);
   }
 
   openModal(){
@@ -37,14 +43,16 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.bsInlineValue$.pipe(skip(2)).subscribe({
-      next: (date)=> {
-        this.selectedDate.set(date);
-        console.log(this.selectedDate());
-      }
-    });
+    // this.bsInlineValue$.pipe(skip(2)).subscribe({
+    //   next: (date)=> {
+    //     this.selectedDate.set(date);
+    //     console.log(this.selectedDate());
+    //   }
+    // });
 
   }
+
+
 
 }
 
