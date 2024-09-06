@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, model, Signal } from '@angular/core';
+import { Component, computed, effect, input, model, OnInit, signal, Signal } from '@angular/core';
 import { TimepickerModule, TimepickerConfig } from 'ngx-bootstrap/timepicker';
 import { FormsModule } from '@angular/forms';
 
@@ -13,20 +13,16 @@ import { FormsModule } from '@angular/forms';
 })
 export class TimeComponent {
   appointmentTime = 30;
-  selectedDate = input.required<Date>();
+  selectedDate = model.required<Date>();
+
 
   isDisabled: Signal<boolean> = computed(() => {
     let currentDate = new Date();
-    if(this.displayTime() < currentDate)
+    if(this.selectedDate().getDate() < currentDate.getDate())
       return true;
     return false; 
   });
 
-  displayTime: Signal<Date> = computed(() =>{
-    let d = new Date(this.selectedDate());    
-    this.selectedDate().getMinutes() > this.appointmentTime ? d.setHours(d.getHours()+1, 0) : d.setMinutes(30, 0);
-    return d;
-  });
 
   minTime: Signal<Date> = computed(() =>{
     let currentDate = new Date();
@@ -48,10 +44,17 @@ export class TimeComponent {
   });
 
 
+
   constructor(){
+    
     effect(()=> {
-      console.log(`Date is: ${this.selectedDate()} `)
-      console.log(this.isDisabled())
+      console.log(`Date is: ${this.selectedDate()} `);
+      console.log(this.isDisabled());
+      
+      //this.selectedDate().getMinutes() > this.appointmentTime ? this.selectedDate().setHours(this.selectedDate().getHours()+1, 0) : this.selectedDate().setMinutes(30, 0);
+      
     })
   }
+
+
 }

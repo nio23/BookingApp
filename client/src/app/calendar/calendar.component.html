@@ -1,12 +1,15 @@
-<div class="container text-center">
-    <div class="row justify-content-center">
-        <div class="col-md-auto ">
-            <bs-datepicker-inline [bsConfig]="datePickerConfig" [bsValue]="selectedDate()" (bsValueChange)="onDateChange($event)"></bs-datepicker-inline>
-        </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-auto">
-        <app-time [selectedDate]="selectedDate()"></app-time>
+<form>
+  <div class="container text-center bg-white rounded-3 shadow">
+      <div class="row justify-content-center">
+          <div class="col">
+            <!-- <input type="hidden" name="date" [ngModel]="selectedDate()"> -->
+              <bs-datepicker-inline [bsConfig]="datePickerConfig" [bsValue]="selectedDate()" (bsValueChange)="onDateChange($event)"></bs-datepicker-inline>
+          </div>
       </div>
-    </div>
-</div>
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <app-time [selectedDate]="selectedDate()"></app-time>
+        </div>
+      </div>
+  </div>
+</form>
