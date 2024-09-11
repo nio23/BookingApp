@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { NgIf } from '@angular/common';
 import { TimeComponent } from "../time/time.component";
 import { FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { AppointmentsService } from '../_services/appointment.service';
 
 
 @Component({
@@ -15,28 +16,41 @@ import { FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent implements OnInit {
-  @ViewChild('dayModal') dayModal: TemplateRef<any> | undefined;
-
   registerForm: FormGroup = new FormGroup({});
-  modalRef?: BsModalRef;
   datePickerConfig: Partial<BsDatepickerConfig>;
+  initDate = new Date();
   selectedDate = signal(new Date());
   
 
-  constructor(private modalService: BsModalService){
+  constructor(private appointmentService: AppointmentsService) {
     this.datePickerConfig = Object.assign({}, { showWeekNumbers: false, showTodayButton: true});
-    //this.selectedDate.update(value => new Date(value.setMinutes(0,0)));
-    effect(()=> console.log(this.selectedDate()));
+    effect(() => {
+      console.log(`Calendar date is: ${this.selectedDate()}`);
+    })
   }
 
 
   onDateChange(date: Date){
-    date.setMinutes(0,0);
+    // const currentDate = new Date();
+    // if(date.getDate() < currentDate.getDate()){
+    //   this.appointmentService.setFullDate(date);
+    // }else
+    console.log('Date changed to: ', date);
     this.selectedDate.set(date);
+    const currentDate = new Date();
+    // if(date.getDate() == currentDate.getDate()){
+      
+    //   this.appointmentService.setFullDate(currentDate);
+    // }
+    this.appointmentService.setDate(date);
+    
+    //this.selectedDate.update(value => new Date(date.setHours(value.getHours(), value.getMinutes(), value.getSeconds(), value.getMilliseconds())));
+    // console.log('Date changed to: ', this.selectedDate());
   }
 
 
   ngOnInit(): void {
+    this.selectedDate.set(this.appointmentService.appointment());
   }
 
 

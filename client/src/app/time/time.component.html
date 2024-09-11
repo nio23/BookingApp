@@ -1,1 +1,1 @@
-<timepicker [(ngModel)]="selectedDate" [disabled]="isDisabled()" [min]="minTime()" [max]="maxTime()" [minuteStep]="appointmentTime"></timepicker>
+<timepicker [(ngModel)]="time" [disabled]="isDisabled()" [min]="minTime()" [max]="maxTime()" [minuteStep]="appointmentTime"  (ngModelChange)="onTimeChange()"></timepicker>
