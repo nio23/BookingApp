@@ -16,11 +16,9 @@ import { toArray } from 'rxjs';
 })
 export class TimeComponent implements OnInit {
   private appointmentService = inject(AppointmentsService);
-  appointmentTime = 30;
-  openTime = new Date();
-  closeTime = new Date();
   time = signal(new Date());
-  appointment = this.appointmentService.appointment; 
+  appointment = this.appointmentService.appointment;
+  appointmentTime = this.appointmentService.appointmentTime; 
 
   isDisabled: Signal<boolean> = computed(() => {
     const currentDate = new Date();
@@ -42,8 +40,7 @@ export class TimeComponent implements OnInit {
 
 
   constructor(){
-    this.openTime.setHours(8, 0, 0, 0);
-    this.closeTime.setHours(22, 0, 0, 0);
+
     this.appointmentService.dateChanged.subscribe({
       next: (date) => {
         // const currentTime = new Date();
@@ -75,7 +72,7 @@ export class TimeComponent implements OnInit {
 
   getLastAppointment():Date{
     const date = new Date(this.time());
-    date.setHours(this.closeTime.getHours(), this.closeTime.getMinutes() - this.appointmentTime, 0, 0);
+    date.setHours(this.appointmentService.closeTime.getHours(), this.appointmentService.closeTime.getMinutes() - this.appointmentService.appointmentTime, 0, 0);
     return date;
   }
 
@@ -84,12 +81,12 @@ export class TimeComponent implements OnInit {
     const today:boolean = isCurrentDay(selectedDate);
 
     if(!today)
-      firstAppointment.setHours(this.openTime.getHours(), this.openTime.getMinutes(), 0, 0);
+      firstAppointment.setHours(this.appointmentService.openTime.getHours(), this.appointmentService.openTime.getMinutes(), 0, 0);
 
-    let minutesForTheNextAppointment = Math.floor(firstAppointment.getMinutes() / this.appointmentTime) * this.appointmentTime;
+    let minutesForTheNextAppointment = Math.floor(firstAppointment.getMinutes() / this.appointmentService.appointmentTime) * this.appointmentService.appointmentTime;
 
     if(today){
-      minutesForTheNextAppointment += this.appointmentTime;
+      minutesForTheNextAppointment += this.appointmentService.appointmentTime;
     }
 
     firstAppointment.setMinutes(minutesForTheNextAppointment, 0, 0);

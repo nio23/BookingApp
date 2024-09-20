@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container pb-3">
   @if(appointments.length > 0){
     <table class="table">
       <thead>
@@ -8,28 +8,17 @@
         </tr>
       </thead>
       <tbody>
-        @for(appointment of appointments;track appointment.id){
+        @for(item of schedule;track $index ){
             <tr>
-                <th scope="row">{{appointment.date}}</th>
+                <!-- <th scope="row">{{appointment.date | date: 'shortTime'}}</th> -->
+                <th scope="row">{{item | date: 'shortTime'}}</th>
                 <td>Name</td>
             </tr>
         }
-        <!-- <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>Larry</td>
-        </tr> -->
       </tbody>
     </table>
   }@else{
-    <p class="pb-3">There isn't any appointment</p>
+    <p>There isn't any appointment</p>
   }
     
 </div>

@@ -1,4 +1,5 @@
 using API.Data;
+using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<DataContext>(opt =>
 });
 builder.Services.AddCors();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
 var app = builder.Build();
 

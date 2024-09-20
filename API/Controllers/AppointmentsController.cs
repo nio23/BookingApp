@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 using API.Data;
 using API.Dtos;
 using API.Entities;
+using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace API.Controllers
 {
     //api/appointments
-    public class AppointmentsController(DataContext context, ILogger<AppointmentsController> logger, IMapper mapper) : BaseApiController
+    public class AppointmentsController(IAppointmentRepository appointmentRepository, ILogger<AppointmentsController> logger, IMapper mapper) : BaseApiController
     {
         private int appointmentTime = 30;
         private TimeOnly openTime = new TimeOnly(8, 0);
@@ -27,18 +28,18 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
         {
-            var appointments = await context.Appointments.ToListAsync();
+            var appointments = await appointmentRepository.GetAppointmentsAsync();
             return Ok(appointments);
         }
 
         [HttpGet("{date}")]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentsByDate(string date)
         {
-            DateOnly requestDate = DateOnly.Parse(date);
-            //logger.LogInformation("DateOnly "+dateOnly);
-            var appointments = await context.Appointments
-                .Where(x=> DateOnly.FromDateTime(x.Date) == requestDate)
-                .ToListAsync();
+            var appointments = await appointmentRepository.GetAppointmentsByDateAsync(date);
+            if(appointments.Count() == 0)
+            {
+                return NotFound();
+            }
             return Ok(appointments);
         }
 
@@ -47,27 +48,65 @@ namespace API.Controllers
         {
             var appointment = mapper.Map<Appointment>(appointmentDto);
 
-            (bool isValid, string errorMsg) timeValidation = TimeIsValid(appointment.Date);
+            (bool isValid, string errorMsg) = TimeIsValid(appointment.Date);
 
-            if(!timeValidation.isValid)
+            if(!isValid)
             {
-                return BadRequest(timeValidation.errorMsg);
+                return BadRequest(errorMsg);
             }
 
-            if (await AppointmentExists(appointment.Date))
+            if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
             {
-                return BadRequest("Appointment already exists");
+                return BadRequest("You already have an appointment at this time");
             }
-            context.Appointments.Add(appointment);
-            await context.SaveChangesAsync();
+
+            appointmentRepository.AddAppointment(appointment);
+
             return new AppointmentDto{
                 Date = appointment.Date.ToString("s")
             };
         }
 
-        private async Task<bool> AppointmentExists(DateTime date)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAppointment(int id)
         {
-            return await context.Appointments.AnyAsync(e => e.Date == date);
+            var appointment = await appointmentRepository.FindAppointmentAsync(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            appointmentRepository.DeleteAppointment(appointment);    
+
+            return Ok();
+        }
+
+        [HttpPut("{id}")]//api/appointments/{id}
+        public async Task<ActionResult> UpdateAppointment(int id, AppointmentDto updateAppointmentDto)
+        {
+            var appointment = await appointmentRepository.FindAppointmentAsync(id);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            mapper.Map(updateAppointmentDto, appointment);
+
+            (bool isValid, string errorMsg) = TimeIsValid(appointment.Date);
+
+            if(!isValid)
+            {
+                return BadRequest(errorMsg);
+            }
+
+            if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
+            {
+                return BadRequest("You already have an appointment at this time");
+            }
+
+            await appointmentRepository.SaveChangesAsync();
+
+            return Ok();
         }
 
         private (bool, string) TimeIsValid(DateTime date)
@@ -95,6 +134,8 @@ namespace API.Controllers
 
             return (true, string.Empty);
         }
+
+        
 
     }
 }

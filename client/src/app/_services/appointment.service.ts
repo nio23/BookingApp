@@ -11,6 +11,10 @@ export class AppointmentsService{
   private http = inject(HttpClient);
   baseUrl = 'https://localhost:5001/api/';
   private _appointment = signal(new Date());
+  private _openTime = new Date();
+  private _closeTime = new Date();
+  private _appointmentTime = 30;
+
   //appointmentTime = 30;
   dateChanged = new Subject<Date>();
 
@@ -19,6 +23,9 @@ export class AppointmentsService{
     effect(() => {
       console.log(`Service date is: ${this._appointment()}`);
     });
+
+    this._openTime.setHours(8, 0, 0, 0);
+    this._closeTime.setHours(22, 0, 0, 0);
 
     this.dateChanged.subscribe({
       next: date => {
@@ -35,8 +42,20 @@ export class AppointmentsService{
 
   }
 
+  public get openTime() {
+    return this._openTime;
+  }
+
+  public get closeTime() {
+    return this._closeTime;
+  }
+
   public get appointment() {
     return this._appointment.asReadonly();
+  }
+
+  public get appointmentTime() {
+    return this._appointmentTime;
   }
 
   getAppointments() {
