@@ -6,6 +6,7 @@ public class Appointment
 {
     public int Id { get; set; }
     public DateTime Date { get; set; }
+    public string ClientName {get; set; }= string.Empty;
 
     override public string ToString()
     {

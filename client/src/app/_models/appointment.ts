@@ -1,4 +1,5 @@
 export interface Appointment {
-    id: number
+    id?: number
     date: Date
+    clientName: string
 }

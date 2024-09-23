@@ -1,24 +1,18 @@
-<div class="container pb-3">
-  @if(appointments.length > 0){
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col" class="col-1">Time</th>
-          <th scope="col" class="col-3">Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for(item of schedule;track $index ){
-            <tr>
-                <!-- <th scope="row">{{appointment.date | date: 'shortTime'}}</th> -->
-                <th scope="row">{{item | date: 'shortTime'}}</th>
-                <td>Name</td>
-            </tr>
-        }
-      </tbody>
-    </table>
-  }@else{
-    <p>There isn't any appointment</p>
-  }
-    
+<div class="container-md pb-3">
+  <table class="table">
+    <thead>
+      <tr class="row justify-content-center">
+        <th scope="col" class="col-md-2">Time</th>
+        <th scope="col" class="col-md-3">Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for(item of schedule;track $index ){
+          <tr class="row justify-content-center">
+            <th scope="row" class="col-md-2">{{item.date| date: 'shortTime'}}</th>
+            <td class="col-md-3">{{item.clientName}}</td>
+          </tr>
+      }
+    </tbody>
+  </table>
 </div>
