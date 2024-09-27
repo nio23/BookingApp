@@ -1,8 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit, signal, TemplateRef } from '@angular/core';
 import { AppointmentsService } from '../_services/appointment.service';
 import { Appointment } from '../_models/appointment';
 import { CommonModule, DatePipe } from '@angular/common';
-import { map } from 'rxjs';
+import { empty, map, single } from 'rxjs';
+import { ModalService } from '../_services/modal.service';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
   selector: 'app-appointments-list',
@@ -11,37 +13,43 @@ import { map } from 'rxjs';
   templateUrl: './appointments-list.component.html',
   styleUrl: './appointments-list.component.css'
 })
-export class AppointmentsListComponent implements OnInit {
+export class AppointmentsListComponent {
   private appointmentService = inject(AppointmentsService);
-  private appointments: Appointment[] = [];
+  modalService = inject(ModalService);
   schedule: Appointment[] = [];
-  private closeTime = this.appointmentService.closeTime;
-  private openTime = this.appointmentService.openTime;
+  private closeTime = signal(this.appointmentService.closeTime);
+  private openTime = signal(this.appointmentService.openTime);
   private appointmentTime = this.appointmentService.appointmentTime;
   
   constructor() {
-    this.schedule = this.loadEmptySchedule();
+    effect(() => {
+      this.schedule = this.loadEmptySchedule();
+    });
     this.appointmentService.dateChanged.subscribe({
       next: () => {
-        this.loadAppointments();
+        this.loadDailyAppointments();
       }
     });
   }
   
-  loadAppointments(){
+  loadDailyAppointments(){
     this.appointmentService.getAppointmentsByDate().pipe(
-      map((appointments: Appointment[]): Appointment[] => {
+      map((appointments: Appointment[]) => {
+        const emptySchecdule = this.loadEmptySchedule();
+        //Fill the empty schedule with the appointments
         appointments.forEach(app => {
-          const appointment = this.schedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(new Date(app.date)));
-          if (appointment) 
-            appointment.clientName = app.clientName;
+          const matchingTime = emptySchecdule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(new Date(app.date)));
+          if (matchingTime){ 
+            matchingTime.clientName = app.clientName;
+            matchingTime.id = app.id;
+            matchingTime.date = new Date(app.date);
+          }
         });
-        return this.schedule;
+        return emptySchecdule;
       }))
     .subscribe({
       next: appointments => {
         this.schedule = appointments;
-        console.log(this.appointments);
       },
       error: error => {
         console.log(error);
@@ -51,17 +59,14 @@ export class AppointmentsListComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    //this.loadAppointments();
-  }
 
 
-  loadEmptySchedule(): Appointment[] {
+  loadEmptySchedule(closeTime: Date = this.closeTime(), openTime: Date = this.openTime()): Appointment[] {
     const schedule:Appointment[] = [];
-    const numberOfAppointmentsOnDay = (this.getDayTimeOnMinutes(this.closeTime) - this.getDayTimeOnMinutes(this.openTime))/this.appointmentTime;
+    const numberOfAppointmentsOnDay = (this.getDayTimeOnMinutes(closeTime) - this.getDayTimeOnMinutes(openTime))/this.appointmentTime;
     console.log(`Number of appointments on day: ${numberOfAppointmentsOnDay}`);
     for(let i = 0; i < numberOfAppointmentsOnDay; i++){
-      const d = new Date(this.openTime);
+      const d = new Date(openTime);
       d.setMinutes(d.getMinutes()+this.appointmentTime * i);
       schedule.push({date: d, clientName: "" });
     }
@@ -70,6 +75,10 @@ export class AppointmentsListComponent implements OnInit {
 
   getDayTimeOnMinutes(date: Date): number {
     return date.getHours() * 60 + date.getMinutes();
+  }
+
+  openModal(appointment: Appointment){ 
+    this.modalService.openModalWithComponent(appointment);
   }
 
 

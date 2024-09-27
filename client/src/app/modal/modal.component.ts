@@ -1,0 +1,48 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AppointmentsService } from '../_services/appointment.service';
+
+@Component({
+  selector: 'app-modal',
+  standalone: true,
+  imports: [DatePipe, ReactiveFormsModule, NgIf],
+  templateUrl: './modal.component.html',
+  styleUrl: './modal.component.css'
+})
+export class ModalComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private appoinmentService = inject(AppointmentsService);
+  title?: string;
+  closeBtnName?: string;
+  time?: Date;
+  clientName: string = '';
+  id?: number;
+  bsModalRef = inject(BsModalRef);
+  bookForm: FormGroup = new FormGroup({});
+  validationErrors: string[] | undefined;
+ 
+  ngOnInit() {
+    console.log("Modal initialized"+this.id);
+    this.initializeForm();
+  }
+
+  initializeForm(){
+    this.bookForm = this.fb.group({
+      date: [this.time?.toISOString(), Validators.required],
+      clientName: [this.clientName, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]]    
+    });
+  }
+
+  book(){
+    this.appoinmentService.bookAppointment(this.bookForm.value).subscribe({
+      next: () => {
+        this.bsModalRef.hide();
+      },
+      error: error => {
+        this.validationErrors = error;
+      }
+    });
+  }
+}

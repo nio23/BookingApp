@@ -27,8 +27,6 @@ export class TimeComponent implements OnInit {
     return false; 
   });
 
-
-
   minTime: Signal<Date> = computed(() =>{
     
     return this.getFirstAppointment(this.appointment());
@@ -42,7 +40,7 @@ export class TimeComponent implements OnInit {
   constructor(){
 
     this.appointmentService.dateChanged.subscribe({
-      next: (date) => {
+      next: (date: Date) => {
         // const currentTime = new Date();
         // this.setToFirstAppointment(currentTime);
         const d = this.getFirstAppointment(date);

@@ -6,12 +6,13 @@ import { FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AppointmentsService } from '../_services/appointment.service';
 import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
 import { isCurrentDay } from '../_services/utils';
+import { ModalComponent } from "../modal/modal.component";
 
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [BsDatepickerModule, NgIf, TimeComponent, ReactiveFormsModule, FormsModule, AppointmentsListComponent],
+  imports: [BsDatepickerModule, NgIf, TimeComponent, ReactiveFormsModule, FormsModule, AppointmentsListComponent, ModalComponent],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })

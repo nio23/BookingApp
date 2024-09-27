@@ -44,7 +44,7 @@ namespace API.Controllers
         }
 
         [HttpPost("add")] //api/appointments/add
-        public async Task<ActionResult<AppointmentDto>> AddAppointment(AppointmentDto appointmentDto)
+        public async Task<ActionResult<AppointmentDto>> AddAppointment([FromBody]AppointmentDto appointmentDto)
         {
             var appointment = mapper.Map<Appointment>(appointmentDto);
 
@@ -63,7 +63,8 @@ namespace API.Controllers
             appointmentRepository.AddAppointment(appointment);
 
             return new AppointmentDto{
-                Date = appointment.Date.ToString("s")
+                Date = appointment.Date.ToString("s"),
+                ClientName = appointment.ClientName
             };
         }
 
