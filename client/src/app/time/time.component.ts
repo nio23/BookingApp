@@ -22,7 +22,7 @@ export class TimeComponent implements OnInit {
 
   isDisabled: Signal<boolean> = computed(() => {
     const currentDate = new Date();
-    if(this.appointment().getDate() < currentDate.getDate())
+    if(this.appointment().getTime() < currentDate.getTime())
       return true;
     return false; 
   });

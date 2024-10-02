@@ -63,7 +63,8 @@ namespace API.Controllers
             appointmentRepository.AddAppointment(appointment);
 
             return new AppointmentDto{
-                Date = appointment.Date.ToString("s"),
+                //2009-06-15T13:45:30 -> 2009-06-15 13:45:30Z
+                Date = appointment.Date.ToString("u"),
                 ClientName = appointment.ClientName
             };
         }
@@ -112,7 +113,12 @@ namespace API.Controllers
 
         private (bool, string) TimeIsValid(DateTime date)
         {
-            var currentDate = DateTime.Now;
+            if(date.Kind != DateTimeKind.Utc)
+            {
+                return (false, "Date must be in UTC format");
+            }
+
+            var currentDate = DateTime.UtcNow;
             if(date < currentDate)
             {
                 return (false, "Cannot book an appointment in the past");

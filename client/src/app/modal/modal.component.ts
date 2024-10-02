@@ -3,6 +3,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentsService } from '../_services/appointment.service';
+import { toISOStringFormat } from '../_services/utils';
 
 @Component({
   selector: 'app-modal',
@@ -16,12 +17,12 @@ export class ModalComponent implements OnInit {
   private appoinmentService = inject(AppointmentsService);
   title?: string;
   closeBtnName?: string;
-  time?: Date;
+  time?: Date = new Date();
   clientName: string = '';
   id?: number;
   bsModalRef = inject(BsModalRef);
   bookForm: FormGroup = new FormGroup({});
-  validationErrors: string[] | undefined;
+  validationError: string | undefined;
  
   ngOnInit() {
     console.log("Modal initialized"+this.id);
@@ -30,18 +31,20 @@ export class ModalComponent implements OnInit {
 
   initializeForm(){
     this.bookForm = this.fb.group({
-      date: [this.time?.toISOString(), Validators.required],
+      date: [this.time, Validators.required],
       clientName: [this.clientName, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]]    
     });
   }
 
   book(){
+    const ISOFormat = toISOStringFormat(this.bookForm.value.date);
+    this.bookForm.patchValue({date: ISOFormat});
     this.appoinmentService.bookAppointment(this.bookForm.value).subscribe({
       next: () => {
         this.bsModalRef.hide();
       },
       error: error => {
-        this.validationErrors = error;
+        this.validationError = error.error;
       }
     });
   }

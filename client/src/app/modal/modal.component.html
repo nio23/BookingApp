@@ -22,20 +22,21 @@
           [class.is-invalid]="bookForm.get('clientName')?.errors && bookForm.get('clientName')?.touched"
         >
         <div *ngIf="bookForm.get('clientName')?.hasError('required')" class="invalid-feedback">Please enter a username</div>
-        <div *ngIf="bookForm.get('clientName')?.hasError('minlength')" class="invalid-feedback">Name must be at least 4 characters</div>
+        <div *ngIf="bookForm.get('clientName')?.hasError('minlength')" class="invalid-feedback">Name must be at least 3 characters</div>
         <div *ngIf="bookForm.get('clientName')?.hasError('maxlength')" class="invalid-feedback">Name must be at most 30 characters </div>
       </div>
     </div>
   </div>
-  @if (validationErrors) {
+  @if (validationError) {
     <div class="row">
       <div class="col">
         <div class="alert alert-danger">
-          <ul>
+          {{validationError}}
+          <!-- <ul>
             @for (error of validationErrors; track $index) {
               <li>{{error}}</li>
             }
-          </ul>
+          </ul> -->
         </div>
       </div>
     </div>

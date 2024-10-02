@@ -2,7 +2,7 @@ import { Component, effect, inject, OnInit, signal, TemplateRef } from '@angular
 import { AppointmentsService } from '../_services/appointment.service';
 import { Appointment } from '../_models/appointment';
 import { CommonModule, DatePipe } from '@angular/common';
-import { empty, map, single } from 'rxjs';
+import { map } from 'rxjs';
 import { ModalService } from '../_services/modal.service';
 import { ModalComponent } from '../modal/modal.component';
 
