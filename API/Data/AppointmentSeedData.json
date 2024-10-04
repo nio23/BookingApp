@@ -1,14 +1,14 @@
 [
     {
-        "date": "2024-09-18T14:30:00",
+        "date": "2024-10-03T14:30:00Z",
         "clientName": "John Doe"
     },
     {
-        "date": "2024-09-18T15:00:00",
+        "date": "2024-10-03T15:00:00Z",
         "clientName": "Chris Patsiouras"
     },
     {
-        "date": "2024-09-18T15:30:00",
+        "date": "2024-10-03T15:30:00Z",
         "clientName": "John Papajohn"
     }
 ]

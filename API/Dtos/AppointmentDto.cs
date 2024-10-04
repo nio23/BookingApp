@@ -5,6 +5,9 @@ namespace API.Dtos;
 
 public class AppointmentDto
 {
-    [Required]public string? Date { get; set; }
-    public string? ClientName { get; set; }
+    [Required]
+    public string Date { get; set; } = string.Empty;
+    [Required]
+    [StringLength(30, MinimumLength = 3)]
+    public string ClientName { get; set; } = string.Empty;
 }

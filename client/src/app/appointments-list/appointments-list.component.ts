@@ -17,13 +17,13 @@ export class AppointmentsListComponent {
   private appointmentService = inject(AppointmentsService);
   modalService = inject(ModalService);
   schedule: Appointment[] = [];
-  private closeTime = signal(this.appointmentService.closeTime);
-  private openTime = signal(this.appointmentService.openTime);
+  private closeTime = this.appointmentService.closeTime;
+  private openTime = this.appointmentService.openTime;
   private appointmentTime = this.appointmentService.appointmentTime;
   
   constructor() {
     effect(() => {
-      this.schedule = this.loadEmptySchedule();
+      //this.schedule = this.loadEmptySchedule();
     });
     this.appointmentService.dateChanged.subscribe({
       next: () => {
@@ -35,17 +35,24 @@ export class AppointmentsListComponent {
   loadDailyAppointments(){
     this.appointmentService.getAppointmentsByDate().pipe(
       map((appointments: Appointment[]) => {
-        const emptySchecdule = this.loadEmptySchedule();
+        const emptySchedule = this.loadEmptySchedule();
+        const offset = new Date().getTimezoneOffset();
         //Fill the empty schedule with the appointments
         appointments.forEach(app => {
-          const matchingTime = emptySchecdule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(new Date(app.date)));
+          const utcDate = new Date(app.date);
+          //console.log("UTC Date: "+utcDate.toUTCString());
+          const local = new Date(utcDate.getTime() - offset * 60000);
+          //console.log("Local Date: "+local.toUTCString());
+          const matchingTime = emptySchedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(local));
           if (matchingTime){ 
             matchingTime.clientName = app.clientName;
             matchingTime.id = app.id;
-            matchingTime.date = new Date(app.date);
+            //matchingTime.date = new Date(local);
+          }else{
+
           }
         });
-        return emptySchecdule;
+        return emptySchedule;
       }))
     .subscribe({
       next: appointments => {
@@ -61,12 +68,11 @@ export class AppointmentsListComponent {
 
 
 
-  loadEmptySchedule(closeTime: Date = this.closeTime(), openTime: Date = this.openTime()): Appointment[] {
+  loadEmptySchedule(): Appointment[] {
     const schedule:Appointment[] = [];
-    const numberOfAppointmentsOnDay = (this.getDayTimeOnMinutes(closeTime) - this.getDayTimeOnMinutes(openTime))/this.appointmentTime;
-    console.log(`Number of appointments on day: ${numberOfAppointmentsOnDay}`);
+    const numberOfAppointmentsOnDay = (this.getDayTimeOnMinutes(this.closeTime()) - this.getDayTimeOnMinutes(this.openTime()))/this.appointmentTime;
     for(let i = 0; i < numberOfAppointmentsOnDay; i++){
-      const d = new Date(openTime);
+      const d = new Date(this.openTime());
       d.setMinutes(d.getMinutes()+this.appointmentTime * i);
       schedule.push({date: d, clientName: "" });
     }
@@ -78,6 +84,7 @@ export class AppointmentsListComponent {
   }
 
   openModal(appointment: Appointment){ 
+    console.log("Opening modal "+appointment.date);
     this.modalService.openModalWithComponent(appointment);
   }
 

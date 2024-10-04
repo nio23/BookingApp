@@ -22,7 +22,7 @@ export class AppointmentsService{
     return new Date(this._appointment().setHours(8, 0, 0, 0));
   });
   get openTime() {
-    return this._openTime();
+    return this._openTime;
   }
   
   @Input() 
@@ -30,7 +30,7 @@ export class AppointmentsService{
     return new Date(this._appointment().setHours(22, 0, 0, 0));
   });
   get closeTime() {
-    return this._closeTime();
+    return this._closeTime;
   }  
 
   @Input() 
@@ -51,7 +51,7 @@ export class AppointmentsService{
 
     this.dateChanged.subscribe({
       next: (date: Date) => {
-        this.setDate(date)
+        this.setDate(date);
       },
       error: (error: any) => console.log(error),
       complete: () => console.log('Request has completed')
@@ -82,11 +82,21 @@ export class AppointmentsService{
   }
 
   getAppointmentsByDate(date: Date = new Date(2024,9,18)) {
-    return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + toOnlyDateString(this._appointment()));
+    //return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + toOnlyDateString(this._appointment()));
+    return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(this._appointment()));
   }
 
   bookAppointment(model: any) {
     return this.http.post(this.baseUrl + 'appointments/add', model);
   }
+
+  updateAppointment(id: number, model: any) {
+    return this.http.put(this.baseUrl + 'appointments/' + id, model);
+  }
+
+  private toISOOnlyDayString(date: Date): string {
+    return date.toISOString().slice(0,10);
+  }
+
 
 }

@@ -12,5 +12,6 @@ public class AutoMapperProfiles : Profile
     {
         CreateMap<AppointmentDto, Appointment>();
         CreateMap<string, DateTime>().ConvertUsing(s=> DateTime.Parse(s, null, DateTimeStyles.AdjustToUniversal));
+        //CreateMap<string, DateTime>().ConvertUsing(s=> DateTime.Parse(s));
     }
 }

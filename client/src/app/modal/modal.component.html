@@ -42,7 +42,7 @@
     </div>
   }
   <div class="modal-footer">
-    <button type="submit" class="btn btn-primary">Book</button>
+    <button [disabled]="!bookForm.valid" type="submit" class="btn btn-primary">Book</button>
     <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Close</button>
   </div>
 </form>

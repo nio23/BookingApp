@@ -14,19 +14,20 @@ import { toISOStringFormat } from '../_services/utils';
 })
 export class ModalComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private appoinmentService = inject(AppointmentsService);
+  private appointmentService = inject(AppointmentsService);
   title?: string;
   closeBtnName?: string;
   time?: Date = new Date();
   clientName: string = '';
-  id?: number;
+  id?: number | undefined;
   bsModalRef = inject(BsModalRef);
   bookForm: FormGroup = new FormGroup({});
   validationError: string | undefined;
  
   ngOnInit() {
-    console.log("Modal initialized"+this.id);
     this.initializeForm();
+    console.log("Modal initialized"+this.id+" "+this.clientName+" "+this.time);
+
   }
 
   initializeForm(){
@@ -37,15 +38,29 @@ export class ModalComponent implements OnInit {
   }
 
   book(){
-    const ISOFormat = toISOStringFormat(this.bookForm.value.date);
-    this.bookForm.patchValue({date: ISOFormat});
-    this.appoinmentService.bookAppointment(this.bookForm.value).subscribe({
-      next: () => {
-        this.bsModalRef.hide();
-      },
-      error: error => {
-        this.validationError = error.error;
-      }
-    });
+    //const ISOFormat = toISOStringFormat(this.bookForm.value.date);
+    //this.bookForm.patchValue({date: ISOFormat});
+    console.log(this.bookForm.value.date);
+    if (this.id === undefined){
+      this.appointmentService.bookAppointment(this.bookForm.value).subscribe({
+        next: () => {
+          this.bsModalRef.hide();
+        },
+        error: error => {
+          this.validationError = error.error;
+        }
+      });
+    }else{
+      this.appointmentService.updateAppointment(this.id, this.bookForm.value).subscribe({
+        next: () => {
+          this.bsModalRef.hide();
+        },
+        error: error => {
+          this.validationError = error.error;
+        }
+      });
+    }
+    
   }
+  
 }

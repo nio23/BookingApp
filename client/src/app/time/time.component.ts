@@ -70,7 +70,7 @@ export class TimeComponent implements OnInit {
 
   getLastAppointment():Date{
     const date = new Date(this.time());
-    date.setHours(this.appointmentService.closeTime.getHours(), this.appointmentService.closeTime.getMinutes() - this.appointmentService.appointmentTime, 0, 0);
+    date.setHours(this.appointmentService.closeTime().getHours(), this.appointmentService.closeTime().getMinutes() - this.appointmentService.appointmentTime, 0, 0);
     return date;
   }
 
@@ -79,7 +79,7 @@ export class TimeComponent implements OnInit {
     const today:boolean = isCurrentDay(selectedDate);
 
     if(!today)
-      firstAppointment.setHours(this.appointmentService.openTime.getHours(), this.appointmentService.openTime.getMinutes(), 0, 0);
+      firstAppointment.setHours(this.appointmentService.openTime().getHours(), this.appointmentService.openTime().getMinutes(), 0, 0);
 
     let minutesForTheNextAppointment = Math.floor(firstAppointment.getMinutes() / this.appointmentService.appointmentTime) * this.appointmentService.appointmentTime;
 

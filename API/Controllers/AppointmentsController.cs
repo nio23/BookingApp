@@ -16,15 +16,12 @@ namespace API.Controllers
     public class AppointmentsController(IAppointmentRepository appointmentRepository, ILogger<AppointmentsController> logger, IMapper mapper) : BaseApiController
     {
         private int appointmentTime = 30;
-        private TimeOnly openTime = new TimeOnly(8, 0);
-        private TimeOnly closeTime = new TimeOnly(22, 0);
-         List<Appointment>_appointments = new List<Appointment>
-        {
-            new Appointment { Id = 1, Date = new DateTime(2023, 09, 11) },
-            new Appointment { Id = 2, Date = new DateTime(2023, 09, 11) },
-            new Appointment { Id = 3, Date = new DateTime(2023, 09, 11) }
-        };
+        //Open time is 5:00 AM UTC
+        //Close time is 7:00 PM UTC
+        private TimeOnly openTime = new TimeOnly(5, 0);
+        private TimeOnly closeTime = new TimeOnly(19, 0);
 
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
         {
@@ -36,10 +33,12 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointmentsByDate(string date)
         {
             var appointments = await appointmentRepository.GetAppointmentsByDateAsync(date);
+
             if(appointments.Count() == 0)
             {
                 return NotFound();
             }
+
             return Ok(appointments);
         }
 
@@ -92,6 +91,11 @@ namespace API.Controllers
                 return NotFound();
             }
 
+            if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
+            {
+                return BadRequest("You already have an appointment at this time");
+            }
+
             mapper.Map(updateAppointmentDto, appointment);
 
             (bool isValid, string errorMsg) = TimeIsValid(appointment.Date);
@@ -101,10 +105,7 @@ namespace API.Controllers
                 return BadRequest(errorMsg);
             }
 
-            if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
-            {
-                return BadRequest("You already have an appointment at this time");
-            }
+            
 
             await appointmentRepository.SaveChangesAsync();
 
@@ -134,9 +135,9 @@ namespace API.Controllers
             var lastAppointmentTime = closeTime.AddMinutes(-appointmentTime);
             var cultureInfo = CultureInfo.GetCultureInfo("en-US");
             
-            if(timeOnly <= openTime || timeOnly >= lastAppointmentTime)
+            if(timeOnly < openTime || timeOnly > lastAppointmentTime)
             {
-                return (false, $"Appointment time must be between {openTime.ToString(cultureInfo)} and {lastAppointmentTime.ToString(cultureInfo)}");
+                return (false, $"Appointment must be between {openTime.ToString(cultureInfo)} - {lastAppointmentTime.ToString(cultureInfo)} UTC time");
             }
 
             return (true, string.Empty);
