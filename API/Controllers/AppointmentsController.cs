@@ -1,29 +1,21 @@
-using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
-using API.Data;
 using API.Dtos;
 using API.Entities;
 using API.Interfaces;
-using API.SignalR;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+using API.Helpers;
+using Microsoft.Extensions.Options;
+
 
 namespace API.Controllers
 {
     //api/appointments
     public class AppointmentsController(IAppointmentRepository appointmentRepository, 
         ILogger<AppointmentsController> logger, IMapper mapper,
-        IHubContext<AppointmentsHub> appointmentsHub) : BaseApiController
+        IOptions<BookingSettings> bookingSettings) : BaseApiController
     {
-        private int appointmentTime = 30;
-        //Open time is 5:00 AM UTC
-        //Close time is 7:00 PM UTC
-        private TimeOnly openTime = new TimeOnly(5, 0);
-        private TimeOnly closeTime = new TimeOnly(19, 0);
+        //Open time and close time are on UTC time
+        private readonly BookingSettings BookingSettings = bookingSettings.Value;
 
         
         [HttpGet]
@@ -51,7 +43,8 @@ namespace API.Controllers
         {
             var appointment = mapper.Map<Appointment>(appointmentDto);
 
-            (bool isValid, string errorMsg) = TimeIsValid(appointment.Date);
+            (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(appointment.Date, 
+                BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
 
             if(!isValid)
             {
@@ -64,7 +57,6 @@ namespace API.Controllers
             }
 
             appointmentRepository.AddAppointment(appointment);
-            await appointmentsHub.Clients.All.SendAsync("AppointmentsUpdated");
 
             return new AppointmentDto{
                 //2009-06-15T13:45:30 -> 2009-06-15 13:45:30Z
@@ -103,51 +95,20 @@ namespace API.Controllers
 
             mapper.Map(updateAppointmentDto, appointment);
 
-            (bool isValid, string errorMsg) = TimeIsValid(appointment.Date);
+            (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(appointment.Date, 
+                BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
 
             if(!isValid)
             {
                 return BadRequest(errorMsg);
-            }
-
-            
+            }         
 
             await appointmentRepository.SaveChangesAsync();
 
             return Ok();
         }
 
-        private (bool, string) TimeIsValid(DateTime date)
-        {
-            if(date.Kind != DateTimeKind.Utc)
-            {
-                return (false, "Date must be in UTC format");
-            }
-
-            var currentDate = DateTime.UtcNow;
-            if(date < currentDate)
-            {
-                return (false, "Cannot book an appointment in the past");
-            }
-
-            if(date.Minute % appointmentTime != 0)
-            {
-                return (false, $"Appointment time must be in {appointmentTime} minute intervals");
-            }
-
-            var timeOnly = TimeOnly.FromDateTime(date);
-
-            var lastAppointmentTime = closeTime.AddMinutes(-appointmentTime);
-            var cultureInfo = CultureInfo.GetCultureInfo("en-US");
-            
-            if(timeOnly < openTime || timeOnly > lastAppointmentTime)
-            {
-                return (false, $"Appointment must be between {openTime.ToString(cultureInfo)} - {lastAppointmentTime.ToString(cultureInfo)} UTC time");
-            }
-
-            return (true, string.Empty);
-        }
-
+        
         
 
     }
