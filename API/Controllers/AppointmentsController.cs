@@ -4,16 +4,20 @@ using API.Data;
 using API.Dtos;
 using API.Entities;
 using API.Interfaces;
+using API.SignalR;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace API.Controllers
 {
     //api/appointments
-    public class AppointmentsController(IAppointmentRepository appointmentRepository, ILogger<AppointmentsController> logger, IMapper mapper) : BaseApiController
+    public class AppointmentsController(IAppointmentRepository appointmentRepository, 
+        ILogger<AppointmentsController> logger, IMapper mapper,
+        IHubContext<AppointmentsHub> appointmentsHub) : BaseApiController
     {
         private int appointmentTime = 30;
         //Open time is 5:00 AM UTC
@@ -60,6 +64,7 @@ namespace API.Controllers
             }
 
             appointmentRepository.AddAppointment(appointment);
+            await appointmentsHub.Clients.All.SendAsync("AppointmentsUpdated");
 
             return new AppointmentDto{
                 //2009-06-15T13:45:30 -> 2009-06-15 13:45:30Z

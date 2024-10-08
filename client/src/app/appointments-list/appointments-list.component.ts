@@ -30,6 +30,23 @@ export class AppointmentsListComponent {
         this.loadDailyAppointments();
       }
     });
+
+    this.appointmentService.dataUpdated.subscribe({
+      next: (appointment:Appointment) => {
+        const currentSelectedDate = this.appointmentService.appointment();
+        const localDate = new Date(appointment.date);
+        if(!this.isTheSameDate(currentSelectedDate, localDate)){
+          return;
+        }
+        console.log("Appointment is the same date ");
+        const matchingTime = this.schedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(localDate));
+        if (matchingTime){ 
+          matchingTime.clientName = appointment.clientName;
+          matchingTime.id = appointment.id;
+        }
+      }
+    });
+    
   }
   
   loadDailyAppointments(){
@@ -40,16 +57,11 @@ export class AppointmentsListComponent {
         //Fill the empty schedule with the appointments
         appointments.forEach(app => {
           const utcDate = new Date(app.date);
-          //console.log("UTC Date: "+utcDate.toUTCString());
-          const local = new Date(utcDate.getTime() - offset * 60000);
-          //console.log("Local Date: "+local.toUTCString());
-          const matchingTime = emptySchedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(local));
+          const localDate = this.UTCToLocal(utcDate);
+          const matchingTime = emptySchedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(localDate));
           if (matchingTime){ 
             matchingTime.clientName = app.clientName;
             matchingTime.id = app.id;
-            //matchingTime.date = new Date(local);
-          }else{
-
           }
         });
         return emptySchedule;
@@ -65,8 +77,11 @@ export class AppointmentsListComponent {
       complete: () => console.log('Request has completed')
     });
   }
-
-
+  
+  UTCToLocal(utcDate: Date): Date {
+    const offset = new Date().getTimezoneOffset();
+    return new Date(utcDate.getTime() - offset * 60000);
+  }
 
   loadEmptySchedule(): Appointment[] {
     const schedule:Appointment[] = [];
@@ -88,5 +103,9 @@ export class AppointmentsListComponent {
     this.modalService.openModalWithComponent(appointment);
   }
 
+
+  isTheSameDate(first: Date, second: Date): boolean {
+    return first.getUTCDate() === second.getUTCDate() && first.getUTCMonth() === second.getUTCMonth() && first.getUTCFullYear() === second.getUTCFullYear();
+  }
 
 }

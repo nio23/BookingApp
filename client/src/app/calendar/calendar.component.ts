@@ -1,5 +1,5 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
-import { BsDatepickerModule, BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { NgIf } from '@angular/common';
 import { TimeComponent } from "../time/time.component";
 import { FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';

@@ -3,13 +3,17 @@ import { computed, effect, EventEmitter, inject, Injectable, Input, model, OnIni
 import { Appointment } from '../_models/appointment';
 import { Observable, Subject } from 'rxjs';
 import { toOnlyDateString } from './utils';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentsService{
   private http = inject(HttpClient);
-  baseUrl = 'https://localhost:5001/api/';
+  private baseUrl = environment.apiUrl;
+  private hubUrl = environment.hubsUrl;
+  private hubConnection?: HubConnection;
 
   @Input() 
   private _appointment = signal(new Date());
@@ -41,6 +45,7 @@ export class AppointmentsService{
   
 
   @Output() dateChanged = new EventEmitter<Date>();
+  @Output() dataUpdated = new EventEmitter<Appointment>();
   
 
   constructor() {
@@ -56,7 +61,22 @@ export class AppointmentsService{
       error: (error: any) => console.log(error),
       complete: () => console.log('Request has completed')
     });
+    this.createHubConnection();
 
+  }
+
+  createHubConnection() {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(this.hubUrl+'appointments')
+      .withAutomaticReconnect()
+      .build();
+
+    this.hubConnection.start().catch(error => console.log(error));
+    this.hubConnection.on('NewAppointment', appointment => {
+      //this.schedule.push(appointment);
+      console.log('Appointments updated from hub'+appointment);
+      this.dataUpdated.emit(appointment);
+    });
   }
 
   getAppointments() {
@@ -82,12 +102,12 @@ export class AppointmentsService{
   }
 
   getAppointmentsByDate(date: Date = new Date(2024,9,18)) {
-    //return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + toOnlyDateString(this._appointment()));
     return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(this._appointment()));
   }
 
-  bookAppointment(model: any) {
-    return this.http.post(this.baseUrl + 'appointments/add', model);
+  async bookAppointment(model: any) {
+    return this.hubConnection?.invoke('AddAppointment', model);
+    //return this.http.post(this.baseUrl + 'appointments/add', model);
   }
 
   updateAppointment(id: number, model: any) {
