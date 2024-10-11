@@ -11,7 +11,7 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
         // Add your service configurations here
-        services.AddControllers();
+        services.AddControllers().AddNewtonsoftJson();
         services.AddDbContext<DataContext>(opt => 
         {
             opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
@@ -19,8 +19,9 @@ public static class ApplicationServiceExtensions
         services.AddCors();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-        services.Configure<BookingSettings>(config.GetSection("AppointmentSettings"));
+        services.Configure<BookingSettings>(config.GetSection("BookingSettings"));
         services.AddSignalR();
+        
 
         return services;
     }
