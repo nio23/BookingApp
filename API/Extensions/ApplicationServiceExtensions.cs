@@ -21,7 +21,6 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
         services.Configure<BookingSettings>(config.GetSection("BookingSettings"));
         services.AddSignalR();
-        
 
         return services;
     }
