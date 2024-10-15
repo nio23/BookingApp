@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>(options)
+public class DataContext(DbContextOptions options) : IdentityDbContext<AppUser, AppRole, int, 
+    IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>(options)
 {
     public DbSet<Appointment> Appointments { get; set; }
 
-    protected override  void OnModelCreating(ModelBuilder modelBuilder){
+    protected override void OnModelCreating(ModelBuilder modelBuilder){
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<AppUser>()

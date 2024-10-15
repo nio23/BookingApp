@@ -30,6 +30,7 @@ namespace API.Controllers
             return new UserDto{
                 UserName = user.UserName,
                 Email = user.Email,
+                PhoneNumber = user.PhoneNumber
             };
         }
 
@@ -48,6 +49,7 @@ namespace API.Controllers
             return new UserDto{
                 UserName = user.UserName,
                 Email = user.Email,
+                PhoneNumber = user.PhoneNumber
             };
         }
     

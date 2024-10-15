@@ -1,0 +1,44 @@
+[
+  {
+    "UserName": "Patty",
+    "Email": "pattybonner@podunk.com",
+    "PhoneNumber": "+30 (822) 580-3141",
+    "Created": "2021-03-06T01:54:27-02:00"
+  },
+  {
+    "UserName": "Harding",
+    "Email": "hardingbrady@podunk.com",
+    "PhoneNumber": "+30 (818) 553-2566",
+    "Created": "2022-08-22T05:59:55-03:00"
+  },
+  {
+    "UserName": "Alexandra",
+    "Email": "alexandrawalker@podunk.com",
+    "PhoneNumber": "+30 (842) 430-2811",
+    "Created": "2023-07-20T09:11:18-03:00"
+  },
+  {
+    "UserName": "Riley",
+    "Email": "rileyrosario@podunk.com",
+    "PhoneNumber": "+30 (885) 447-2515",
+    "Created": "2021-10-18T01:16:53-03:00"
+  },
+  {
+    "UserName": "Flowers",
+    "Email": "flowersquinn@podunk.com",
+    "PhoneNumber": "+30 (921) 572-2932",
+    "Created": "2022-03-16T08:46:04-02:00"
+  },
+  {
+    "UserName": "Freda",
+    "Email": "fredaratliff@podunk.com",
+    "PhoneNumber": "+30 (988) 466-3267",
+    "Created": "2018-03-22T10:50:02-02:00"
+  },
+  {
+    "UserName": "Jodie",
+    "Email": "jodiefowler@podunk.com",
+    "PhoneNumber": "+30 (821) 484-2598",
+    "Created": "2016-01-06T10:06:56-02:00"
+  }
+]
