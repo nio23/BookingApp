@@ -1,6 +1,7 @@
 using API.Data;
 using API.Dtos;
 using API.Entities;
+using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    public class AccountController(UserManager<AppUser> userManager, IMapper mapper) : BaseApiController
+    public class AccountController(UserManager<AppUser> userManager, IMapper mapper, ITokenService tokenService) : BaseApiController
     {
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
@@ -28,9 +29,10 @@ namespace API.Controllers
                 return BadRequest(result.Errors);
 
             return new UserDto{
-                UserName = user.UserName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber
+                UserName = user.UserName!,
+                Email = user.Email!,
+                PhoneNumber = user.PhoneNumber!,
+                Token = await tokenService.CreateToken(user)
             };
         }
 
@@ -48,8 +50,9 @@ namespace API.Controllers
                 
             return new UserDto{
                 UserName = user.UserName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber
+                Email = user.Email!,
+                PhoneNumber = user.PhoneNumber!,
+                Token = await tokenService.CreateToken(user)
             };
         }
     

@@ -14,5 +14,6 @@ public class AutoMapperProfiles : Profile
         CreateMap<RegisterDto, AppUser>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName.ToLower()));
         CreateMap<string, DateTime>().ConvertUsing(s=> DateTime.Parse(s, null, DateTimeStyles.AdjustToUniversal));
         //CreateMap<string, DateTime>().ConvertUsing(s=> DateTime.Parse(s));
+        CreateMap<AppUser, MemberDto>();
     }
 }
