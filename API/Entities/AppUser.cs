@@ -6,4 +6,5 @@ public class AppUser: IdentityUser<int>
 {
     public DateTime Created { get; set; } = DateTime.UtcNow;
     public ICollection<AppUserRole> UserRoles { get; set; } = [];
+    public ICollection<Appointment> Appointments { get; set; } = [];
 }

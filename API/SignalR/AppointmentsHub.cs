@@ -47,5 +47,18 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
         await Clients.All.SendAsync("NewAppointment", mapper.Map<Appointment>(appointmentDto));
     }
 
+    public async Task DeleteAppointment(int id)
+    {
+        var appointment = await appointmentRepository.FindAppointmentAsync(id);
+        if (appointment == null)
+        {
+            throw new HubException("Appointment not found");
+        }
+
+        appointmentRepository.DeleteAppointment(appointment);    
+
+        await Clients.All.SendAsync("AppointmentDeleted", id);
+    }
+
    
 }

@@ -11,6 +11,7 @@ public class AutoMapperProfiles : Profile
     public AutoMapperProfiles()
     {
         CreateMap<AppointmentDto, Appointment>();
+        CreateMap<Appointment, AppointmentDto>().ForMember(dest => dest.User, opt => opt.MapFrom(src => src.AppUser));
         CreateMap<RegisterDto, AppUser>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName.ToLower()));
         CreateMap<string, DateTime>().ConvertUsing(s=> DateTime.Parse(s, null, DateTimeStyles.AdjustToUniversal));
         //CreateMap<string, DateTime>().ConvertUsing(s=> DateTime.Parse(s));

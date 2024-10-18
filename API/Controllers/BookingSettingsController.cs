@@ -7,10 +7,12 @@ using Newtonsoft.Json;
 using System.Runtime.InteropServices.JavaScript;
 using System.Diagnostics;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace API.Controllers
 {
+    [Authorize(Roles ="Admin")]
     //api/bookingsettings
     public class BookingSettingsController(IOptionsSnapshot<BookingSettings> settings,
          ILogger<BookingSettingsController> logger, IWebHostEnvironment env) : BaseApiController
@@ -85,11 +87,6 @@ namespace API.Controllers
             jsonObj["BookingSettings"]["OpenTime"] = timeOnly.ToString("HH:mm:ss");
             await WriteJsonToFile(filePath, jsonObj);
             return NoContent();
-        }
-
-        private async void UpdateAppSettings(BookingSettings bookingSettings)
-        {
-            
         }
 
         private string GetAppSettingsFilepath(){

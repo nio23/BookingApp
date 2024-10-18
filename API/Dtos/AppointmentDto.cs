@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using API.Entities;
 
 namespace API.Dtos;
 
@@ -9,5 +10,5 @@ public class AppointmentDto
     public string Date { get; set; } = string.Empty;
     [Required]
     [StringLength(30, MinimumLength = 3)]
-    public string ClientName { get; set; } = string.Empty;
+    public MemberDto? User { get; set; } 
 }

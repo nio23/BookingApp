@@ -6,6 +6,7 @@ namespace API.Interfaces;
 public interface IAppointmentRepository
 {
     Task<IEnumerable<Appointment>> GetAppointmentsAsync();
+    Task<IEnumerable<Appointment>> GetAppointmentsAsync(int id);
     Task<IEnumerable<Appointment>> GetAppointmentsByDateAsync(string date);
     void AddAppointment(Appointment appointment);
     void DeleteAppointment(Appointment appointment);
@@ -13,4 +14,5 @@ public interface IAppointmentRepository
     Task<bool> AppointmentExistsAsync(DateTime date);
     Task<Appointment?> FindAppointmentAsync(int id);
     Task<bool> SaveChangesAsync();
+    Task<IEnumerable<Appointment>> GetFreeSlotsAsync(string date);
 }
