@@ -1,23 +1,24 @@
 using System;
 using System.Globalization;
+using API.Dtos;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class AppointmentRepository(DataContext context) : IAppointmentRepository
+public class AppointmentRepository(DataContext context, IMapper mapper) : IAppointmentRepository
 {
-    public async void AddAppointment(Appointment appointment)
+    public void AddAppointment(Appointment appointment)
     {
         context.Appointments.Add(appointment);
-        await SaveChangesAsync();
     }
 
-    public async void DeleteAppointment(Appointment appointment)
+    public void DeleteAppointment(Appointment appointment)
     {
         context.Appointments.Remove(appointment);
-        await SaveChangesAsync();
     }
 
     public async Task<IEnumerable<Appointment>> GetAppointmentsAsync()
@@ -65,10 +66,17 @@ public class AppointmentRepository(DataContext context) : IAppointmentRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Appointment>> GetAppointmentsAsync(int id)
+    public async Task<IEnumerable<T>> GetAppointmentsAsync<T>(int userId)
     {
-        return await context.Appointments
-            .Where(x=> x.Id == id)
-            .ToListAsync();
+        var query = context.Appointments.Where(x=> x.AppUserId == userId);
+
+        if(typeof(T) == typeof(MyAppointmentDto))
+        {
+            return (await query.ProjectTo<MyAppointmentDto>(mapper.ConfigurationProvider).ToListAsync() as IEnumerable<T>) ?? Enumerable.Empty<T>();
+        }
+
+        return (await query.ToListAsync() as IEnumerable<T>) ?? Enumerable.Empty<T>();
+
     }
+
 }

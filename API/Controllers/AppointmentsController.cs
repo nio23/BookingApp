@@ -8,11 +8,14 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper.Configuration.Annotations;
 using System.Security.Claims;
+using API.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace API.Controllers
 {
     //api/appointments
+    [Authorize]
     public class AppointmentsController(IAppointmentRepository appointmentRepository, 
         ILogger<AppointmentsController> logger, IMapper mapper,
         IOptionsSnapshot<BookingSettings> bookingSettings) : BaseApiController
@@ -79,7 +82,7 @@ namespace API.Controllers
         }
 
         
-        //[Authorize(Roles ="Admin, Moderator")]
+        [Authorize(Roles ="Admin, Moderator")]
         [HttpGet("{date}")]
         public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAppointmentsByDate(string date)
         {
@@ -94,13 +97,30 @@ namespace API.Controllers
 
             return Ok(appointmentsToReturn);
         }
-
-        [HttpPost("add")] //api/appointments/add
-        public async Task<ActionResult<AppointmentDto>> AddAppointment([FromBody]AppointmentDto appointmentDto)
+        
+        [HttpGet("my")]
+        public async Task<ActionResult<IEnumerable<MyAppointmentDto>>> GetMyAppointments()
         {
-            var appointment = mapper.Map<Appointment>(appointmentDto);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("You are not authorized to view this page");
+                }
 
-            (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(appointment.Date, 
+            var appointments = await appointmentRepository.GetAppointmentsAsync<MyAppointmentDto>(int.Parse(userId));
+
+            return Ok(appointments);
+        }
+
+        [HttpPost("new")] //api/appointments/new
+        public async Task<ActionResult> AddAppointment([FromBody]CreateAppointmentDto createAppointmentDto)
+        {
+            var user = User.GetUserId();
+
+            var parsedDate = mapper.Map<DateTime>(createAppointmentDto.Date);
+
+            (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(parsedDate, 
                 BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
 
             if(!isValid)
@@ -108,31 +128,54 @@ namespace API.Controllers
                 return BadRequest(errorMsg);
             }
 
-            if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
+            if(await appointmentRepository.AppointmentExistsAsync(parsedDate))
             {
-                return BadRequest("You already have an appointment at this time");
+                return BadRequest("There is an other appointment at this time");
             }
+
+            var appointment = new Appointment{
+                Date = parsedDate,
+                AppUserId = user
+            };
 
             appointmentRepository.AddAppointment(appointment);
 
-            return new AppointmentDto{
+            if(!await appointmentRepository.SaveChangesAsync())
+            {
+                return BadRequest("Failed to book the appointment");
+            }
+
+            var result = new {
                 //2009-06-15T13:45:30 -> 2009-06-15 13:45:30Z
                 Date = appointment.Date.ToString("u")
             };
+
+            return Ok(result);
         }
 
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteAppointment(int id)
         {
+            var userId = User.GetUserId();
+
             var appointment = await appointmentRepository.FindAppointmentAsync(id);
+
             if (appointment == null)
             {
                 return NotFound();
             }
 
-            appointmentRepository.DeleteAppointment(appointment);    
+            if(appointment.AppUserId != userId)
+            {
+                return Unauthorized("You are not authorized to delete this appointment");
+            }
 
+            appointmentRepository.DeleteAppointment(appointment);    
+            if(!await appointmentRepository.SaveChangesAsync())
+            {
+                return BadRequest("Failed to delete the appointment");
+            }
             return Ok();
         }
 
