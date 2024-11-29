@@ -45,7 +45,8 @@ export class ModalComponent implements OnInit {
       this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
         this.bsModalRef.hide();
       }).catch(error => {
-        this.validationError = error.error;
+        this.validationError = error;
+        console.log(error);
       });
     }else{
       this.appointmentService.updateAppointment(this.id, this.bookForm.value).subscribe({
@@ -53,7 +54,7 @@ export class ModalComponent implements OnInit {
           this.bsModalRef.hide();
         },
         error: error => {
-          this.validationError = error.error;
+          this.validationError = error;
         }
       });
     }

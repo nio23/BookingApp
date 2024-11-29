@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CalendarComponent } from "./calendar/calendar.component";
 import { NavComponent } from "./nav/nav.component";
+import { AccountService } from './_services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,22 @@ import { NavComponent } from "./nav/nav.component";
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent{
+export class AppComponent implements OnInit{
+
+  private accountService = inject(AccountService);
+
+  ngOnInit(): void {
+    this.setCurrentUser();
+  }
+
+  setCurrentUser(){
+    const userString = localStorage.getItem('user');
+
+    if(!userString)
+      return;
+
+    const user = JSON.parse(userString);
+    this.accountService.currentUser.set(user);
+  }
 
 }

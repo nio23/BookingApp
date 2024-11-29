@@ -105,6 +105,10 @@ export class AppointmentsService{
     return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(this._appointment()));
   }
 
+  getFreeAppointmentsByDate(date: Date = new Date(2024,9,18)) {
+    return this.http.get<Appointment[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(this._appointment()));
+  }
+
   async bookAppointment(model: any) {
     return this.hubConnection?.invoke('AddAppointment', model);
     //return this.http.post(this.baseUrl + 'appointments/add', model);

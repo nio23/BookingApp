@@ -50,7 +50,7 @@ export class AppointmentsListComponent {
   }
   
   loadDailyAppointments(){
-    this.appointmentService.getAppointmentsByDate().pipe(
+    this.appointmentService.getFreeAppointmentsByDate().pipe(
       map((appointments: Appointment[]) => {
         const emptySchedule = this.loadEmptySchedule();
         const offset = new Date().getTimezoneOffset();
