@@ -38,6 +38,7 @@ namespace API.Controllers
         //     return Ok(appointments);
         // }
 
+        [Authorize(Roles ="Admin, Moderator, Member")]
         [HttpGet("free/{date}")]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetFreeSlots(string date){
             var currentDate = DateTime.Parse(date);
