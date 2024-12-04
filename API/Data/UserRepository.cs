@@ -21,4 +21,9 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     {
         return await context.Users.ProjectTo<MemberDto>(mapper.ConfigurationProvider).ToListAsync();
     }
+
+    public async Task<AppUser?> GetUserByIdAsync(int userId)
+    {
+        return await context.Users.FindAsync(userId);
+    }
 }

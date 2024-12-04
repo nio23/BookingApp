@@ -7,10 +7,13 @@ using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using API.Helpers;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
+using API.Extensions;
 
 namespace API.SignalR;
 
-public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapper mapper, IOptions<BookingSettings> bookingSettings) : Hub
+public class AppointmentsHub(IAppointmentRepository appointmentRepository, IUserRepository userRepository,
+ IMapper mapper, IOptions<BookingSettings> bookingSettings) : Hub
 {
     //Open time and close time are on UTC time
     private readonly BookingSettings BookingSettings = bookingSettings.Value;
@@ -19,11 +22,28 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
         await Clients.All.SendAsync("AppointmentsUpdated");
     }
 
-    public async Task AddAppointment(AppointmentDto appointmentDto)
+    public async Task AddAppointment(CreateAppointmentDto createAppointmentDto)
     {
-        var appointment = mapper.Map<Appointment>(appointmentDto);
+        var user = Context.User;
+        if (user == null)
+        {
+            throw new HubException("User context is null");
+        }
+        var claims = user.Claims;
+        foreach (var claim in claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+        }
+        var userId = Context.User?.GetUserId();
+        
+        if (userId == null)
+        {
+            throw new HubException("User is not valid");
+        }
 
-        (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(appointment.Date, 
+        //var appointment = mapper.Map<Appointment>(appointmentDto);
+
+        (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(createAppointmentDto.Date, 
             BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
 
         if(!isValid)
@@ -31,10 +51,19 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
             throw new HubException(errorMsg);
         }
 
-        if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
+        if(await appointmentRepository.AppointmentExistsAsync(createAppointmentDto.Date))
         {
-            throw new HubException("You already have an appointment at this time");
+            throw new HubException("There is already an appointment at this time");
         }
+
+        
+
+        var appUser = await userRepository.GetUserByIdAsync(userId.Value) ?? throw new HubException("User not found");
+
+        var appointment = new Appointment{
+            Date = DateTime.Parse(createAppointmentDto.Date),
+            AppUser = appUser
+        };
 
         appointmentRepository.AddAppointment(appointment);
 
@@ -44,7 +73,7 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
         //     ClientName = appointment.ClientName
         // };
 
-        await Clients.All.SendAsync("NewAppointment", mapper.Map<Appointment>(appointmentDto));
+        await Clients.All.SendAsync("NewAppointment", mapper.Map<AppointmentDto>(appointment));
     }
 
     public async Task DeleteAppointment(int id)

@@ -6,6 +6,7 @@ using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace API.Data;
 
@@ -40,6 +41,17 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
     public async Task<bool> AppointmentExistsAsync(DateTime date)
     {
         return await context.Appointments.AnyAsync(e => e.Date == date);
+    }
+
+    public async Task<bool> AppointmentExistsAsync(string dateString)
+    {
+
+        if (!DateTime.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime date))
+        {
+            return false;
+        }
+        
+        return await AppointmentExistsAsync(date);
     }
 
     public async Task<Appointment?> FindAppointmentAsync(int id)

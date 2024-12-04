@@ -40,7 +40,7 @@ namespace API.Controllers
 
         [Authorize(Roles ="Admin, Moderator, Member")]
         [HttpGet("free/{date}")]
-        public async Task<ActionResult<IEnumerable<Appointment>>> GetFreeSlots(string date){
+        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetFreeSlots(string date){
             var currentDate = DateTime.Parse(date);
 
             if(currentDate < DateTime.Today)
@@ -52,7 +52,7 @@ namespace API.Controllers
             var firstAppointment = bookingSettings.Value.OpenTime;
             var lastAppointment = bookingSettings.Value.CloseTime;
             var appointmentTime = bookingSettings.Value.AppointmentTime;
-            var freeSlots = new List<Appointment>();
+            var freeSlots = new List<Slot>();
 
             
             var currentAppointment = TimeOnly.FromDateTime(currentDate);
@@ -69,7 +69,7 @@ namespace API.Controllers
                     var dt = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day);
                     dt = dt.AddHours(currentAppointment.Hour);
                     dt = dt.AddMinutes(currentAppointment.Minute);
-                    freeSlots.Add(new Appointment{
+                    freeSlots.Add(new Slot{
                         Date = DateTime.SpecifyKind(dt, DateTimeKind.Utc)
                     });
                     currentAppointment = currentAppointment.AddMinutes(appointmentTime);
