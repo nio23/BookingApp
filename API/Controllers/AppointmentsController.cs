@@ -41,9 +41,9 @@ namespace API.Controllers
         [Authorize(Roles ="Admin, Moderator, Member")]
         [HttpGet("free/{date}")]
         public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetFreeSlots(string date){
-            var currentDate = DateTime.Parse(date);
+            var selectedDate = DateTime.Parse(date);
 
-            if(currentDate < DateTime.Today)
+            if(selectedDate < DateTime.Today)
             {
                 return BadRequest("You can't request a date in the past");
             }
@@ -51,30 +51,26 @@ namespace API.Controllers
             var appointments = await appointmentRepository.GetAppointmentsByDateAsync(date);
             var firstAppointment = bookingSettings.Value.OpenTime;
             var lastAppointment = bookingSettings.Value.CloseTime;
-            var appointmentTime = bookingSettings.Value.AppointmentTime;
+            var appointmentTime = Convert.ToDouble(bookingSettings.Value.AppointmentTime);
             var freeSlots = new List<Slot>();
 
             
-            var currentAppointment = TimeOnly.FromDateTime(currentDate);
+            var currentAppointment = TimeOnly.FromDateTime(selectedDate);
             currentAppointment = currentAppointment.AddHours(firstAppointment.Hour);
             currentAppointment = currentAppointment.AddMinutes(firstAppointment.Minute);
-    
-            logger.LogInformation($"Current date: {currentAppointment}");
 
-
+            //Create a list of free slots
             while(currentAppointment < lastAppointment)
             {
+                //If there is no appointment at this time, add it to the list
                 if(!appointments.Any(a => TimeOnly.FromDateTime(a.Date) == currentAppointment))
                 {
-                    var dt = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day);
-                    dt = dt.AddHours(currentAppointment.Hour);
-                    dt = dt.AddMinutes(currentAppointment.Minute);
+                    var dt = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, currentAppointment.Hour, currentAppointment.Minute, 0, DateTimeKind.Utc);
                     freeSlots.Add(new Slot{
-                        Date = DateTime.SpecifyKind(dt, DateTimeKind.Utc)
+                        Date = dt
                     });
-                    currentAppointment = currentAppointment.AddMinutes(appointmentTime);
-
                 }
+                currentAppointment = currentAppointment.AddMinutes(appointmentTime);
             }
 
             if(!freeSlots.Any())

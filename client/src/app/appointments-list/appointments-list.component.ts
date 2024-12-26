@@ -53,7 +53,6 @@ export class AppointmentsListComponent {
     this.appointmentService.getFreeAppointmentsByDate().pipe(
       map((appointments: Appointment[]) => {
         const emptySchedule = this.loadEmptySchedule();
-        const offset = new Date().getTimezoneOffset();
         //Fill the empty schedule with the appointments
         appointments.forEach(app => {
           const utcDate = new Date(app.date);
