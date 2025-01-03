@@ -5,12 +5,15 @@ import { Observable, Subject } from 'rxjs';
 import { toOnlyDateString } from './utils';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
+import { User } from '../_models/user';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentsService{
   private http = inject(HttpClient);
+  private accountService = inject(AccountService);
   private baseUrl = environment.apiUrl;
   private hubUrl = environment.hubsUrl;
   private hubConnection?: HubConnection;
@@ -61,13 +64,17 @@ export class AppointmentsService{
       error: (error: any) => console.log(error),
       complete: () => console.log('Request has completed')
     });
-    this.createHubConnection();
+    const user = this.accountService.currentUser();
+    if(!user) return;
+    this.createHubConnection(user);
 
   }
 
-  createHubConnection() {
+  createHubConnection(user: User) {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl+'appointments')
+      .withUrl(this.hubUrl+'appointments', {
+        accessTokenFactory: () => user.token
+      })
       .withAutomaticReconnect()
       .build();
 

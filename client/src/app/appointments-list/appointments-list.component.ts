@@ -5,6 +5,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { map } from 'rxjs';
 import { ModalService } from '../_services/modal.service';
 import { ModalComponent } from '../modal/modal.component';
+import { Slot } from '../_models/slot';
 
 @Component({
   selector: 'app-appointments-list',
@@ -16,7 +17,7 @@ import { ModalComponent } from '../modal/modal.component';
 export class AppointmentsListComponent {
   private appointmentService = inject(AppointmentsService);
   modalService = inject(ModalService);
-  schedule: Appointment[] = [];
+  schedule: Slot[] = [];
   private closeTime = this.appointmentService.closeTime;
   private openTime = this.appointmentService.openTime;
   private appointmentTime = this.appointmentService.appointmentTime;
@@ -27,26 +28,38 @@ export class AppointmentsListComponent {
     });
     this.appointmentService.dateChanged.subscribe({
       next: () => {
-        this.loadDailyAppointments();
+        this.loadAvailable();
       }
     });
 
-    this.appointmentService.dataUpdated.subscribe({
-      next: (appointment:Appointment) => {
-        const currentSelectedDate = this.appointmentService.appointment();
-        const localDate = new Date(appointment.date);
-        if(!this.isTheSameDate(currentSelectedDate, localDate)){
-          return;
-        }
-        console.log("Appointment is the same date ");
-        const matchingTime = this.schedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(localDate));
-        if (matchingTime){ 
-          matchingTime.clientName = appointment.clientName;
-          matchingTime.id = appointment.id;
-        }
-      }
-    });
+    // this.appointmentService.dataUpdated.subscribe({
+    //   next: (appointment:Appointment) => {
+    //     const currentSelectedDate = this.appointmentService.appointment();
+    //     const localDate = new Date(appointment.date);
+    //     if(!this.isTheSameDate(currentSelectedDate, localDate)){
+    //       return;
+    //     }
+    //     console.log("Appointment is the same date ");
+    //     const matchingTime = this.schedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(localDate));
+    //     if (matchingTime){ 
+    //       matchingTime.clientName = appointment.clientName;
+    //       matchingTime.id = appointment.id;
+    //     }
+    //   }
+    // });
     
+  }
+  
+  loadAvailable(){
+    this.appointmentService.getFreeAppointmentsByDate().subscribe({
+      next: slots => {
+        this.schedule = slots;
+      },
+      error: error => {
+        console.log(error);
+      },
+      complete: () => console.log('Available appointments has been loaded!')
+    });
   }
   
   loadDailyAppointments(){
@@ -97,7 +110,7 @@ export class AppointmentsListComponent {
     return date.getHours() * 60 + date.getMinutes();
   }
 
-  openModal(appointment: Appointment){ 
+  openModal(appointment: Slot){ 
     console.log("Opening modal "+appointment.date);
     this.modalService.openModalWithComponent(appointment);
   }

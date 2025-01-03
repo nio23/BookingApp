@@ -24,25 +24,10 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IUser
 
     public async Task AddAppointment(CreateAppointmentDto createAppointmentDto)
     {
-        var user = Context.User;
-        if (user == null)
-        {
-            throw new HubException("User context is null");
-        }
-        var claims = user.Claims;
-        foreach (var claim in claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
-        }
-        var userId = Context.User?.GetUserId();
+        var user = Context.User ?? throw new HubException("User context is null");
+
+        var userId = user.GetUserId();
         
-        if (userId == null)
-        {
-            throw new HubException("User is not valid");
-        }
-
-        //var appointment = mapper.Map<Appointment>(appointmentDto);
-
         (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(createAppointmentDto.Date, 
             BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
 
@@ -56,22 +41,17 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IUser
             throw new HubException("There is already an appointment at this time");
         }
 
-        
-
-        var appUser = await userRepository.GetUserByIdAsync(userId.Value) ?? throw new HubException("User not found");
-
         var appointment = new Appointment{
             Date = DateTime.Parse(createAppointmentDto.Date),
-            AppUser = appUser
+            AppUserId = userId
         };
 
         appointmentRepository.AddAppointment(appointment);
 
-        // return new AppointmentDto{
-        //     //2009-06-15T13:45:30 -> 2009-06-15 13:45:30Z
-        //     Date = appointment.Date.ToString("u"),
-        //     ClientName = appointment.ClientName
-        // };
+        if(!await appointmentRepository.SaveChangesAsync())
+        {
+            throw new HubException("Failed to book the appointment");
+        }
 
         await Clients.All.SendAsync("NewAppointment", mapper.Map<AppointmentDto>(appointment));
     }

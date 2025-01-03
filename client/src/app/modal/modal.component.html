@@ -1,17 +1,17 @@
 <form [formGroup]="bookForm" (ngSubmit)="book()" >
   <div class="modal-header">
-    <h4 class="modal-title pull-left">{{title}}</h4>
+    <h4 class="modal-title pull-left"><input class="form-control-plaintext fs-4" readonly type="text" [value]="time | date: 'shortTime'"></h4>
     <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
       <span aria-hidden="true" class="visually-hidden">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <div class="row justify-content-center">
-      <div class="col-3">
-        <input class="form-control-plaintext fs-4" readonly type="text" [value]="time | date: 'shortTime'">
+      <div class="col">
+        <p>{{clientName | titlecase }}, would you like to book the appointment?</p>
       </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col">
         <input 
           type="text" 
@@ -25,7 +25,7 @@
         <div *ngIf="bookForm.get('clientName')?.hasError('minlength')" class="invalid-feedback">Name must be at least 3 characters</div>
         <div *ngIf="bookForm.get('clientName')?.hasError('maxlength')" class="invalid-feedback">Name must be at most 30 characters </div>
       </div>
-    </div>
+    </div> -->
   </div>
   @if (validationError) {
     <div class="row">

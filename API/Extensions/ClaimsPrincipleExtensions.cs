@@ -13,7 +13,7 @@ public static class ClaimsPrincipleExtensions
 
     public static int GetUserId(this ClaimsPrincipal user)
     {
-        var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new Exception("Cannot get user id from token");
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("Cannot get user id from token");
         return int.Parse(userId);
     }
 }

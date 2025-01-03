@@ -38,15 +38,15 @@ namespace API.Controllers
         //     return Ok(appointments);
         // }
 
-        [Authorize(Roles ="Admin, Moderator, Member")]
+        [AllowAnonymous]
         [HttpGet("free/{date}")]
         public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetFreeSlots(string date){
             var selectedDate = DateTime.Parse(date);
 
-            if(selectedDate < DateTime.Today)
-            {
-                return BadRequest("You can't request a date in the past");
-            }
+            // if(selectedDate < DateTime.Today)
+            // {
+            //     return BadRequest("You can't request a date in the past");
+            // }
 
             var appointments = await appointmentRepository.GetAppointmentsByDateAsync(date);
             var firstAppointment = bookingSettings.Value.OpenTime;
@@ -54,7 +54,6 @@ namespace API.Controllers
             var appointmentTime = Convert.ToDouble(bookingSettings.Value.AppointmentTime);
             var freeSlots = new List<Slot>();
 
-            
             var currentAppointment = TimeOnly.FromDateTime(selectedDate);
             currentAppointment = currentAppointment.AddHours(firstAppointment.Hour);
             currentAppointment = currentAppointment.AddMinutes(firstAppointment.Minute);
