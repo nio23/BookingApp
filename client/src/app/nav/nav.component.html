@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md bg-dark" data-bs-theme="dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">The Barber</a>
+    <a class="navbar-brand" routerLink="/">The Barber</a>
     <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed" data-bs-toggle="collapse"
       data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
       aria-label="Toggle navigation">
@@ -24,6 +24,7 @@
         </button>
         <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-animated">
           <li role="menuitem"><a class="dropdown-item" (click)="logout()" href="#">Logout</a></li>
+          <li role="menuitem"><a routerLink="/my-appointments" class="dropdown-item">My appointments</a></li>
           <!-- <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
           <li role="menuitem"><a class="dropdown-item" href="#">Something else
               here</a></li> -->

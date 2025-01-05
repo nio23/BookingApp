@@ -97,7 +97,7 @@ namespace API.Controllers
         [HttpGet("my")]
         public async Task<ActionResult<IEnumerable<MyAppointmentDto>>> GetMyAppointments()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
             if (string.IsNullOrEmpty(userId))
                 {

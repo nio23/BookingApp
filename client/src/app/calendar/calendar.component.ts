@@ -1,18 +1,14 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { NgIf } from '@angular/common';
-import { TimeComponent } from "../time/time.component";
 import { FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AppointmentsService } from '../_services/appointment.service';
-import { AppointmentsListComponent } from '../appointments-list/appointments-list.component';
 import { isCurrentDay } from '../_services/utils';
-import { ModalComponent } from "../modal/modal.component";
 
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [BsDatepickerModule, NgIf, TimeComponent, ReactiveFormsModule, FormsModule, AppointmentsListComponent, ModalComponent],
+  imports: [BsDatepickerModule, ReactiveFormsModule, FormsModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })
