@@ -12,8 +12,7 @@ using API.Extensions;
 
 namespace API.SignalR;
 
-public class AppointmentsHub(IAppointmentRepository appointmentRepository, IUserRepository userRepository,
- IMapper mapper, IOptions<BookingSettings> bookingSettings) : Hub
+public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapper mapper, IOptions<BookingSettings> bookingSettings) : Hub
 {
     //Open time and close time are on UTC time
     private readonly BookingSettings BookingSettings = bookingSettings.Value;
