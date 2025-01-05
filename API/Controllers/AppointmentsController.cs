@@ -176,17 +176,25 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]//api/appointments/{id}
-        public async Task<ActionResult> UpdateAppointment(int id, AppointmentDto updateAppointmentDto)
+        public async Task<ActionResult> UpdateAppointment(int id, MyAppointmentDto updateAppointmentDto)
         {
+            var userId = User.GetUserId();
+
             var appointment = await appointmentRepository.FindAppointmentAsync(id);
+
             if (appointment == null)
             {
                 return NotFound();
             }
 
+            if(appointment.AppUserId != userId)
+            {
+                return Unauthorized("You are not authorized to delete this appointment");
+            }
+
             if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
             {
-                return BadRequest("You already have an appointment at this time");
+                return BadRequest("There is already an appointment at this time");
             }
 
             mapper.Map(updateAppointmentDto, appointment);

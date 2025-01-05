@@ -1,10 +1,9 @@
-import { Component, effect, inject, OnInit, signal, TemplateRef } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { AppointmentsService } from '../_services/appointment.service';
 import { Appointment } from '../_models/appointment';
 import { CommonModule, DatePipe } from '@angular/common';
 import { map } from 'rxjs';
 import { ModalService } from '../_services/modal.service';
-import { ModalComponent } from '../modal/modal.component';
 import { Slot } from '../_models/slot';
 
 @Component({

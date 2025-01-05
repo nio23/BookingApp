@@ -3,7 +3,7 @@
     @for (item of schedule; track $index) {
       <div class="col-sm-3">
         <button type="button" class="btn btn-outline-secondary text-nowrap m-1" (click)="openModal(item)">
-          {{item.date| date: 'shortTime'}}
+          {{item.date | date: 'shortTime'}}
         </button> 
       </div>
     }

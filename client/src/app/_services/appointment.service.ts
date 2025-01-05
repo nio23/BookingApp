@@ -7,6 +7,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
 import { AccountService } from './account.service';
+import { myAppointment } from '../_models/myAppointment';
 
 @Injectable({
   providedIn: 'root'
@@ -90,6 +91,10 @@ export class AppointmentsService{
     return this.http.get<Appointment[]>(this.baseUrl + 'appointments');
   }
 
+  deleteAppointment(id: number) {
+    return this.http.delete(this.baseUrl + 'appointments/'+id);
+  }
+
   setDate(date: Date){
     const month = date.getMonth();
     const year = date.getFullYear();
@@ -114,6 +119,10 @@ export class AppointmentsService{
 
   getFreeAppointmentsByDate(date: Date = new Date(2024,9,18)) {
     return this.http.get<Appointment[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(this._appointment()));
+  }
+
+  getMyAppointments() {
+    return this.http.get<myAppointment[]>(this.baseUrl + 'appointments/my');
   }
 
   async bookAppointment(model: any) {
