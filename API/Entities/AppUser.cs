@@ -1,7 +1,10 @@
-﻿namespace API.Entities;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class AppUser
+namespace API.Entities;
+
+public class AppUser: IdentityUser<int>
 {
-    public int Id { get; set; }
-    public required string UserName { get; set; }
+    public DateTime Created { get; set; } = DateTime.UtcNow;
+    public ICollection<AppUserRole> UserRoles { get; set; } = [];
+    public ICollection<Appointment> Appointments { get; set; } = [];
 }

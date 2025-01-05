@@ -7,10 +7,12 @@ using Newtonsoft.Json;
 using System.Runtime.InteropServices.JavaScript;
 using System.Diagnostics;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace API.Controllers
 {
+    [Authorize(Roles ="Admin")]
     //api/bookingsettings
     public class BookingSettingsController(IOptionsSnapshot<BookingSettings> settings,
          ILogger<BookingSettingsController> logger, IWebHostEnvironment env) : BaseApiController
@@ -18,7 +20,7 @@ namespace API.Controllers
         //private BookingSettings BookingSettings = settings.Value;
 
         [HttpGet]
-        public async Task<ActionResult<BookingSettings>> GetBookingSettings()
+        public ActionResult<BookingSettings> GetBookingSettings()
         {
             return Ok(new {
                 AppointmentTime = settings.Value.AppointmentTime,
@@ -37,7 +39,14 @@ namespace API.Controllers
                 return BadRequest("Open time must be before close time");
 
             var filePath = GetAppSettingsFilepath();
-            var jsonObj = await FileToJson(filePath);
+
+            JObject jsonObj;
+            
+            try{
+                jsonObj = await FileToJson(filePath);
+            }catch(Exception e){
+                return BadRequest(e.Message);
+            }
             
             var set = jsonObj["BookingSettings"];
 
@@ -72,24 +81,35 @@ namespace API.Controllers
 
             var filePath = GetAppSettingsFilepath();
             
-            var jsonObj = await FileToJson(filePath);
+            JObject jsonObj;
+            
+            try{
+                jsonObj = await FileToJson(filePath);
+            }catch(Exception e){
+                return BadRequest(e.Message);
+            }
 
-            if(jsonObj == null)
-                return BadRequest("Error parsing file");
+            var bookingSettings = jsonObj["BookingSettings"];
+            if (bookingSettings == null)
+            {
+                return BadRequest("BookingSettings not found in appsettings.json");
+            }
 
-            var closeTime = TimeOnly.Parse(jsonObj["BookingSettings"]["CloseTime"].ToString());
+            var closeTimeToken = bookingSettings["CloseTime"];
+            if (closeTimeToken == null)
+            {
+                return BadRequest("CloseTime not found in BookingSettings");
+            }
+            var closeTime = TimeOnly.Parse(closeTimeToken.ToString());
             
             if(timeOnly >= closeTime)
                 return BadRequest("Open time must be before close time");
 
-            jsonObj["BookingSettings"]["OpenTime"] = timeOnly.ToString("HH:mm:ss");
+            
+            
+            bookingSettings["OpenTime"] = timeOnly.ToString("HH:mm:ss");
             await WriteJsonToFile(filePath, jsonObj);
             return NoContent();
-        }
-
-        private async void UpdateAppSettings(BookingSettings bookingSettings)
-        {
-            
         }
 
         private string GetAppSettingsFilepath(){
@@ -97,13 +117,13 @@ namespace API.Controllers
             return Path.Combine(Directory.GetCurrentDirectory(), fileName);
         }
 
-        private async Task<JObject?> FileToJson(string filePath){
+        private async Task<JObject> FileToJson(string filePath){
             var text = await System.IO.File.ReadAllTextAsync(filePath);
             try{
                 return JObject.Parse(text); 
             }catch(JsonReaderException e){
                 logger.LogError(e, $"Error parsing {text}. {e}");
-                return null;
+                throw new Exception("Error parsing json file", e);
             }
         }
 

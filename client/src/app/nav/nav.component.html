@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-md bg-dark" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">The Barber</a>
+    <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed" data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse mt-2" id="navbarSupportedContent">
+      @if(!accountService.currentUser()){
+      <form class="d-flex flex-md-row flex-column align-items-end ms-auto" (ngSubmit)="login()">
+        <input class="form-control me-md-2 my-1" name="username" [(ngModel)]="authentication.username"
+          placeholder="Username">
+        <input class="form-control me-md-2 my-1" name="password" [(ngModel)]="authentication.password" type="password"
+          placeholder="Password">
+        <button class="btn btn-outline-success my-1" type="submit">Login</button>
+      </form>
+      <button class="btn">Register</button>
+      }@else {
+      <div class="d-flex flex-md-row flex-column align-items-end ms-auto btn-group" dropdown>
+        <button id="button-animated" dropdownToggle type="button" class="btn  dropdown-toggle"
+          aria-controls="dropdown-animated">
+          Button dropdown <span class="caret"></span>
+        </button>
+        <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-animated">
+          <li role="menuitem"><a class="dropdown-item" (click)="logout()" href="#">Logout</a></li>
+          <!-- <li role="menuitem"><a class="dropdown-item" href="#">Another action</a></li>
+          <li role="menuitem"><a class="dropdown-item" href="#">Something else
+              here</a></li> -->
+        </ul>
+      </div>
+      }
+    </div>
+  </div>
+</nav>

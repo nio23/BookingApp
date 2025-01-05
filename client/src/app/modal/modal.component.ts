@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { CommonModule, DatePipe, NgIf } from '@angular/common';
+import { DatePipe, TitleCasePipe} from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentsService } from '../_services/appointment.service';
 import { toISOStringFormat } from '../_services/utils';
@@ -8,7 +8,7 @@ import { toISOStringFormat } from '../_services/utils';
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule, NgIf],
+  imports: [DatePipe, ReactiveFormsModule, TitleCasePipe],
   templateUrl: './modal.component.html',
   styleUrl: './modal.component.css'
 })
@@ -38,14 +38,15 @@ export class ModalComponent implements OnInit {
   }
 
   book(){
-    //const ISOFormat = toISOStringFormat(this.bookForm.value.date);
-    //this.bookForm.patchValue({date: ISOFormat});
+    // const ISOFormat = toISOStringFormat(this.bookForm.value.date);
+    // this.bookForm.patchValue({date: ISOFormat});
     console.log(this.bookForm.value.date);
     if (this.id === undefined){
       this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
         this.bsModalRef.hide();
       }).catch(error => {
-        this.validationError = error.error;
+        this.validationError = error;
+        console.log(error);
       });
     }else{
       this.appointmentService.updateAppointment(this.id, this.bookForm.value).subscribe({
@@ -53,7 +54,7 @@ export class ModalComponent implements OnInit {
           this.bsModalRef.hide();
         },
         error: error => {
-          this.validationError = error.error;
+          this.validationError = error;
         }
       });
     }

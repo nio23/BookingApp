@@ -35,6 +35,16 @@ public static class AppointmentHelper
 
         return (true, string.Empty);
     }
+
+    public static (bool, string) TimeIsValid(string dateString, int appointmentTime, TimeOnly openTime, TimeOnly closeTime)
+    {
+        if (!DateTime.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out DateTime date))
+        {
+            return (false, "Invalid date format");
+        }
+
+        return TimeIsValid(date, appointmentTime, openTime, closeTime);
+    }
     
 
 }

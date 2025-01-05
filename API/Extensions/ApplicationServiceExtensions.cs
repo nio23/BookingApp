@@ -2,6 +2,8 @@ using System;
 using API.Data;
 using API.Helpers;
 using API.Interfaces;
+using API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions;
@@ -20,8 +22,9 @@ public static class ApplicationServiceExtensions
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
         services.Configure<BookingSettings>(config.GetSection("BookingSettings"));
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddSignalR();
-        
 
         return services;
     }
