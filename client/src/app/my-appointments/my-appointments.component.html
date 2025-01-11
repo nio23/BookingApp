@@ -1,8 +1,8 @@
 <accordion [isAnimated]="true">
     @for(appointment of myAppointments; track appointment.id){
         <accordion-group heading="{{appointment.date | date: 'medium'}}">
-            <button class="btn btn-secondary mx-1" (click)="changeAppointment()">Update</button>
-            <button class="btn btn-danger mx-1" (click)="deleteAppointment(appointment.id)">Delete</button>
+            <button class="btn btn-primary mx-1" (click)="changeAppointment()">Update</button>
+            <button class="btn btn-primary mx-1" (click)="openDeleteConfirmationModal(appointment)">Delete</button>
         </accordion-group>
 
     }

@@ -1,21 +1,26 @@
-import { inject, Injectable } from '@angular/core';
+import { EventEmitter, inject, Injectable, Output } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { ModalComponent } from '../modal/modal.component';
+import { BookingConfirmation } from '../_modals/booking-confirmation/booking-confirmation.component';
 import { Appointment } from '../_models/appointment';
 import { Slot } from '../_models/slot';
 import { AccountService } from './account.service';
+import { DeleteMyAppointmentComponent } from '../_modals/delete-my-appointment/delete-my-appointment.component';
+import { myAppointment } from '../_models/myAppointment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ModalService {
+  @Output() appointmentDeleted = new EventEmitter<number>();
+  
   bsModalRef?: BsModalRef;
   modalService = inject(BsModalService);
+
   
   constructor(private accountService: AccountService){}
 
 
-  openModalWithComponent(appointment: Slot) {
+  openBookingConfirmationModal(appointment: Slot) {
     
     const initialState: ModalOptions = {
       initialState: {
@@ -24,7 +29,16 @@ export class ModalService {
         clientName: this.accountService.currentUser()?.userName
       }
     };
-    this.bsModalRef = this.modalService.show(ModalComponent, initialState);
+    this.bsModalRef = this.modalService.show(BookingConfirmation, initialState);
+  }
+
+  openDeleteConfirmationModal(appointment: myAppointment){
+    const initialState: ModalOptions = {
+      initialState: {
+        appointment: appointment,
+      }
+    };
+    this.bsModalRef = this.modalService.show(DeleteMyAppointmentComponent, initialState);
   }
 
   

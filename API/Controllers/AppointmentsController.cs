@@ -167,6 +167,12 @@ namespace API.Controllers
                 return Unauthorized("You are not authorized to delete this appointment");
             }
 
+            var currentDate = DateTime.UtcNow;
+            if(appointment.Date < currentDate)
+            {
+                return BadRequest("You can't delete an appointment in the past");
+            }
+
             appointmentRepository.DeleteAppointment(appointment);    
             if(!await appointmentRepository.SaveChangesAsync())
             {

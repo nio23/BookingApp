@@ -2,17 +2,17 @@ import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { DatePipe, TitleCasePipe} from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AppointmentsService } from '../_services/appointment.service';
-import { toISOStringFormat } from '../_services/utils';
+import { AppointmentsService } from '../../_services/appointment.service';
+import { toISOStringFormat } from '../../_services/utils';
 
 @Component({
   selector: 'app-modal',
   standalone: true,
   imports: [DatePipe, ReactiveFormsModule, TitleCasePipe],
-  templateUrl: './modal.component.html',
-  styleUrl: './modal.component.css'
+  templateUrl: './booking-confirmation.component.html',
+  styleUrl: './booking-confirmation.component.css'
 })
-export class ModalComponent implements OnInit {
+export class BookingConfirmation implements OnInit {
   private fb = inject(FormBuilder);
   private appointmentService = inject(AppointmentsService);
   title?: string;

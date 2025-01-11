@@ -111,7 +111,7 @@ export class AppointmentsListComponent {
 
   openModal(appointment: Slot){ 
     console.log("Opening modal "+appointment.date);
-    this.modalService.openModalWithComponent(appointment);
+    this.modalService.openBookingConfirmationModal(appointment);
   }
 
 
