@@ -27,8 +27,12 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
 
         var userId = user.GetUserId();
         
-        (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(createAppointmentDto.Date, 
+        var parsedDate = mapper.Map<DateTime>(createAppointmentDto.Date);
+
+        (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(parsedDate, 
             BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
+        
+        Console.WriteLine("The date is "+createAppointmentDto.Date.ToString());
 
         if(!isValid)
         {
@@ -41,7 +45,7 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
         }
 
         var appointment = new Appointment{
-            Date = DateTime.Parse(createAppointmentDto.Date),
+            Date = parsedDate,
             AppUserId = userId
         };
 

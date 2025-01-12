@@ -115,6 +115,7 @@ namespace API.Controllers
             var user = User.GetUserId();
 
             var parsedDate = mapper.Map<DateTime>(createAppointmentDto.Date);
+            //logger.LogInformation($"Parsed date: {parsedDate}");
 
             (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(parsedDate, 
                 BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
