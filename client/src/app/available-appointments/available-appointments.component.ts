@@ -10,10 +10,10 @@ import { Slot } from '../_models/slot';
   selector: 'app-appointments-list',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './appointments-list.component.html',
-  styleUrl: './appointments-list.component.css'
+  templateUrl: './available-appointments.component.html',
+  styleUrl: './available-appointments.component.css'
 })
-export class AppointmentsListComponent {
+export class AvailableAppointmentsComponent {
   private appointmentService = inject(AppointmentsService);
   modalService = inject(ModalService);
   schedule: Slot[] = [];

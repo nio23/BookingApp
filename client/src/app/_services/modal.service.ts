@@ -6,12 +6,14 @@ import { Slot } from '../_models/slot';
 import { AccountService } from './account.service';
 import { DeleteMyAppointmentComponent } from '../_modals/delete-my-appointment/delete-my-appointment.component';
 import { myAppointment } from '../_models/myAppointment';
+import { UpdateMyAppointmentComponent } from '../_modals/update-my-appointment/update-my-appointment.component';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ModalService {
   @Output() appointmentDeleted = new EventEmitter<number>();
+  @Output() appointmentBooked = new EventEmitter();
   
   bsModalRef?: BsModalRef;
   modalService = inject(BsModalService);
@@ -39,6 +41,15 @@ export class ModalService {
       }
     };
     this.bsModalRef = this.modalService.show(DeleteMyAppointmentComponent, initialState);
+  }
+
+  openUpdateAppointmentModal(appointment: myAppointment){
+    const initialState: ModalOptions = {
+      initialState: {
+        appointment: appointment,
+      }
+    };
+    this.bsModalRef = this.modalService.show(UpdateMyAppointmentComponent, initialState);
   }
 
   

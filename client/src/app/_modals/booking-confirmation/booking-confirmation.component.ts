@@ -4,6 +4,7 @@ import { DatePipe, TitleCasePipe} from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { toISOStringFormat } from '../../_services/utils';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
   selector: 'app-modal',
@@ -15,12 +16,12 @@ import { toISOStringFormat } from '../../_services/utils';
 export class BookingConfirmation implements OnInit {
   private fb = inject(FormBuilder);
   private appointmentService = inject(AppointmentsService);
+  modalService = inject(ModalService);
   title?: string;
   closeBtnName?: string;
   time?: Date = new Date();
   clientName: string = '';
   id?: number | undefined;
-  bsModalRef = inject(BsModalRef);
   bookForm: FormGroup = new FormGroup({});
   validationError: string | undefined;
  
@@ -41,24 +42,13 @@ export class BookingConfirmation implements OnInit {
     // const ISOFormat = toISOStringFormat(this.bookForm.value.date);
     // this.bookForm.patchValue({date: ISOFormat});
     console.log(this.bookForm.value.date);
-    if (this.id === undefined){
-      this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
-        this.bsModalRef.hide();
-      }).catch(error => {
-        this.validationError = error;
-        console.log(error);
-      });
-    }else{
-      this.appointmentService.updateAppointment(this.id, this.bookForm.value).subscribe({
-        next: () => {
-          this.bsModalRef.hide();
-        },
-        error: error => {
-          this.validationError = error;
-        }
-      });
-    }
-    
+    this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
+      this.modalService.appointmentBooked.emit();
+      this.modalService.hideModal();
+    }).catch(error => {
+      this.validationError = error;
+      console.log(error);
+    });
   }
   
 }

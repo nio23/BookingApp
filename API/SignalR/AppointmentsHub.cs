@@ -31,8 +31,6 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
 
         (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(parsedDate, 
             BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
-        
-        Console.WriteLine("The date is "+createAppointmentDto.Date.ToString());
 
         if(!isValid)
         {

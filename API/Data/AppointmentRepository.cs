@@ -21,12 +21,7 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
     {
         context.Appointments.Remove(appointment);
     }
-
-    public async Task<IEnumerable<Appointment>> GetAppointmentsAsync()
-    {
-        return await context.Appointments.Include(x=> x.AppUser).ToListAsync();
-    }
-
+    
     public async Task<IEnumerable<Appointment>> GetAppointmentsByDateAsync(string date)
     {
         DateOnly requestDate = DateOnly.Parse(date);
@@ -45,11 +40,7 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
 
     public async Task<bool> AppointmentExistsAsync(string dateString)
     {
-
-        if (!DateTime.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTime date))
-        {
-            return false;
-        }
+        var date = mapper.Map<string, DateTime>(dateString);
         
         return await AppointmentExistsAsync(date);
     }
@@ -80,7 +71,7 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
 
     public async Task<IEnumerable<T>> GetAppointmentsAsync<T>(int userId)
     {
-        var query = context.Appointments.Where(x=> x.AppUserId == userId);
+        var query = context.Appointments.Include(x=> x.AppUser).OrderByDescending(o => o.Date);
 
         if(typeof(T) == typeof(MyAppointmentDto))
         {

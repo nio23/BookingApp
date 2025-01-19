@@ -1,18 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { AccordionComponent, AccordionPanelComponent } from 'ngx-bootstrap/accordion';
-import { AppointmentsService } from '../_services/appointment.service';
-import { myAppointment } from '../_models/myAppointment';
+import { AppointmentsService } from '../../_services/appointment.service';
+import { myAppointment } from '../../_models/myAppointment';
 import { CommonModule } from '@angular/common';
-import { ModalService } from '../_services/modal.service';
+import { ModalService } from '../../_services/modal.service';
 
 @Component({
-  selector: 'app-my-appointments',
+  selector: 'app-my-appointments-list',
   standalone: true,
   imports: [CommonModule, AccordionComponent, AccordionPanelComponent],
-  templateUrl: './my-appointments.component.html',
-  styleUrl: './my-appointments.component.css'
+  templateUrl: './my-appointments-list.component.html',
+  styleUrl: './my-appointments-list.component.css'
 })
-export class MyAppointmentsComponent implements OnInit {
+export class MyAppointmentsListComponent implements OnInit {
   appointmentService = inject(AppointmentsService);
   myAppointments: myAppointment[] = [];
   modalService = inject(ModalService);
@@ -34,8 +34,8 @@ export class MyAppointmentsComponent implements OnInit {
     });
   }
 
-  changeAppointment() {
-    throw new Error('Method not implemented.');
+  changeAppointment(appointment: myAppointment) {
+    this.modalService.openUpdateAppointmentModal(appointment);
   }
 
 

@@ -106,7 +106,15 @@ namespace API.Controllers
 
             var appointments = await appointmentRepository.GetAppointmentsAsync<MyAppointmentDto>(int.Parse(userId));
 
-            return Ok(appointments);
+            var currentDate = DateTime.UtcNow;
+            
+            var result = appointments.Select(a => {
+                var appointmentDate = mapper.Map<string, DateTime>(a.Date);
+                a.canUpdate = appointmentDate - TimeSpan.FromHours(1) > currentDate ;
+                return a;
+            });
+
+            return Ok(result);
         }
 
         [HttpPost("new")] //api/appointments/new
@@ -182,12 +190,12 @@ namespace API.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}")]//api/appointments/{id}
-        public async Task<ActionResult> UpdateAppointment(int id, MyAppointmentDto updateAppointmentDto)
+        [HttpPut()]//api/appointments/
+        public async Task<ActionResult> UpdateAppointment(UpdateAppointmentDto updateAppointmentDto)
         {
             var userId = User.GetUserId();
 
-            var appointment = await appointmentRepository.FindAppointmentAsync(id);
+            var appointment = await appointmentRepository.FindAppointmentAsync(updateAppointmentDto.Id);
 
             if (appointment == null)
             {
@@ -196,23 +204,28 @@ namespace API.Controllers
 
             if(appointment.AppUserId != userId)
             {
-                return Unauthorized("You are not authorized to delete this appointment");
+                return Unauthorized("You are not authorized to update this appointment");
             }
 
-            if(await appointmentRepository.AppointmentExistsAsync(appointment.Date))
-            {
-                return BadRequest("There is already an appointment at this time");
-            }
-
-            mapper.Map(updateAppointmentDto, appointment);
-
-            (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(appointment.Date, 
+            (bool isValid, string errorMsg) = AppointmentHelper.TimeIsValid(updateAppointmentDto.Date, 
                 BookingSettings.AppointmentTime, BookingSettings.OpenTime, BookingSettings.CloseTime);
 
             if(!isValid)
             {
                 return BadRequest(errorMsg);
-            }         
+            }   
+
+            if(await appointmentRepository.AppointmentExistsAsync(updateAppointmentDto.Date))
+            {
+                return BadRequest("There is already an appointment at this time");
+            }
+
+            if(appointment.Date - TimeSpan.FromHours(1) < DateTime.UtcNow)
+            {
+                return BadRequest("You can only update your appointment at least 1 hour before the appointment");
+            }
+
+            mapper.Map(updateAppointmentDto, appointment); 
 
             await appointmentRepository.SaveChangesAsync();
 

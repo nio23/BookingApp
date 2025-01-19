@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col-xs-12 col-md-5 col-lg-4 form-group mb-3">
+      <input
+        class="form-control"
+        #datepickerFull="bsDatepicker"
+        bsDatepicker
+        formControlName="dateFull"
+        [bsConfig]="{ dateInputFormat: 'MMMM Do YYYY, h:mm:ss a' }">
+    </div>
+    <div class="col-xs-12 col-12 col-md-3 form-group mb-3">
+      <button class="btn btn-success" (click)="datepickerFull.toggle()" [attr.aria-expanded]="datepickerFull.isOpen" type="button">Date Picker</button>
+    </div>
+  </div>

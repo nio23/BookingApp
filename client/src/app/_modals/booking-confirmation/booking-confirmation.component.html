@@ -1,7 +1,7 @@
 <form [formGroup]="bookForm" (ngSubmit)="book()" >
   <div class="modal-header">
     <h4 class="modal-title pull-left"><input class="form-control-plaintext fs-4" readonly type="text" [value]="time | date: 'shortTime'"></h4>
-    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalService.hideModal()">
       <span aria-hidden="true" class="visually-hidden">&times;</span>
     </button>
   </div>
@@ -43,6 +43,6 @@
   }
   <div class="modal-footer">
     <button [disabled]="!bookForm.valid" type="submit" class="btn btn-primary">Book</button>
-    <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Close</button>
+    <button type="button" class="btn btn-secondary" (click)="modalService.hideModal()">Close</button>
   </div>
 </form>

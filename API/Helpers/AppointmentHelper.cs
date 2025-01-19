@@ -40,7 +40,6 @@ public static class AppointmentHelper
     {
         if (!DateTime.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out DateTime date))
         {
-
             return (false, "Invalid date format");
         }
 
