@@ -46,7 +46,7 @@ export class ModalService {
   openUpdateAppointmentModal(appointment: myAppointment){
     const initialState: ModalOptions = {
       initialState: {
-        appointment: appointment,
+        myAppointment: appointment,
       }
     };
     this.bsModalRef = this.modalService.show(UpdateMyAppointmentComponent, initialState);

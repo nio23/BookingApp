@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
 import { AccountService } from './account.service';
 import { myAppointment } from '../_models/myAppointment';
+import { Slot } from '../_models/slot';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,19 @@ export class AppointmentsService{
   private _appointmentTime = 30;
   get appointmentTime() {
     return this._appointmentTime;
+  }
+
+  @Input()
+  private _minDate = new Date();
+  get minDate() {
+    return this._minDate;
+  }
+
+  @Input()
+  private _maxDate = new Date();
+  get maxDate() {
+    this._maxDate.setDate(this._maxDate.getDate() + 30);
+    return this._maxDate;
   }
   
 
@@ -117,8 +131,10 @@ export class AppointmentsService{
     return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(this._appointment()));
   }
 
-  getFreeAppointmentsByDate(date: Date = new Date(2024,9,18)) {
-    return this.http.get<Appointment[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(this._appointment()));
+  getFreeAppointmentsByDate(date: Date = new Date()) {
+    if(date === undefined)
+      return this.http.get<Slot[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(this._appointment()));
+    return this.http.get<Slot[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(date));
   }
 
   getMyAppointments() {
@@ -130,8 +146,8 @@ export class AppointmentsService{
     //return this.http.post(this.baseUrl + 'appointments/add', model);
   }
 
-  updateAppointment(id: number, model: any) {
-    return this.http.put(this.baseUrl + 'appointments/' + id, model);
+  updateAppointment(model: myAppointment) {
+    return this.http.put(this.baseUrl + 'appointments/', model);
   }
 
   private toISOOnlyDayString(date: Date): string {

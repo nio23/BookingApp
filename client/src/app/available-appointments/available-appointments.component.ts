@@ -61,33 +61,33 @@ export class AvailableAppointmentsComponent {
     });
   }
   
-  loadDailyAppointments(){
-    this.appointmentService.getFreeAppointmentsByDate().pipe(
-      map((appointments: Appointment[]) => {
-        const emptySchedule = this.loadEmptySchedule();
-        //Fill the empty schedule with the appointments
-        appointments.forEach(app => {
-          const utcDate = new Date(app.date);
-          const localDate = this.UTCToLocal(utcDate);
-          const matchingTime = emptySchedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(localDate));
-          if (matchingTime){ 
-            matchingTime.clientName = app.clientName;
-            matchingTime.id = app.id;
-          }
-        });
-        return emptySchedule;
-      }))
-    .subscribe({
-      next: appointments => {
-        this.schedule = appointments;
-      },
-      error: error => {
-        console.log(error);
-        this.schedule = this.loadEmptySchedule();
-      },
-      complete: () => console.log('Request has completed')
-    });
-  }
+  // loadDailyAppointments(){
+  //   this.appointmentService.getFreeAppointmentsByDate().pipe(
+  //     map((appointments: Appointment[]) => {
+  //       const emptySchedule = this.loadEmptySchedule();
+  //       //Fill the empty schedule with the appointments
+  //       appointments.forEach(app => {
+  //         const utcDate = new Date(app.date);
+  //         const localDate = this.UTCToLocal(utcDate);
+  //         const matchingTime = emptySchedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(localDate));
+  //         if (matchingTime){ 
+  //           matchingTime.clientName = app.clientName;
+  //           matchingTime.id = app.id;
+  //         }
+  //       });
+  //       return emptySchedule;
+  //     }))
+  //   .subscribe({
+  //     next: appointments => {
+  //       this.schedule = appointments;
+  //     },
+  //     error: error => {
+  //       console.log(error);
+  //       this.schedule = this.loadEmptySchedule();
+  //     },
+  //     complete: () => console.log('Request has completed')
+  //   });
+  // }
   
   UTCToLocal(utcDate: Date): Date {
     const offset = new Date().getTimezoneOffset();
