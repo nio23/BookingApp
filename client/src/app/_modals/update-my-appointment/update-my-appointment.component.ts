@@ -23,9 +23,16 @@ export class UpdateMyAppointmentComponent implements OnInit {
   myAppointment?: myAppointment;
   firstAvailableAppointment : Date = new Date();
   freeSlots: Slot[] = [];
+  selectedSlot?: Slot = undefined;
+  httpErrors: string[] | undefined;
 
   ngOnInit(): void {
     this.getAvailableSlots(new Date());
+  }
+
+  onSlotSelected(slot: Slot){
+    this.selectedSlot = slot;
+    console.log("Selected "+this.selectedSlot.date);
   }
 
   getAvailableSlots(date: Date) {
@@ -37,11 +44,11 @@ export class UpdateMyAppointmentComponent implements OnInit {
     });
   }
 
-  updateMyAppointment(slot: Slot) {
-    if(this.myAppointment === undefined)
+  updateMyAppointment() {
+    if(this.myAppointment === undefined || this.selectedSlot === undefined)
       return;
 
-    this.myAppointment.date = slot.date;
+    this.myAppointment.date = this.selectedSlot.date;
     this.appointmentService.updateAppointment(this.myAppointment).subscribe({
       next: () => {
         console.log('Appointment updated');
