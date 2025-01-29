@@ -5,34 +5,43 @@
                 class="form-control"
                 #datepickerFull="bsDatepicker"
                 bsDatepicker
+                [(bsValue)]="selectedDate"
                 [maxDate]="appointmentService.maxDate"
                 [minDate]="appointmentService.minDate"
                 [bsConfig]="{ dateInputFormat: 'MMM D, Y' }"
-                (bsValueChange)="onDateChange($event)">
+                (bsValueChange)="onDateChange()">
         </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="row row-cols-3 row-cols-lg-4 justify-content-center list-group list-group-horizontal">
             @for (item of freeSlots; track $index) {
-                <div class="list-group list-group-horizontal col-lg-3 col-4 px-0 py-1">
-                    <a class="list-group-item list-group-item-action list-group-item-primary" (click)="onSlotSelected(item)">
+                <div class="col px-0 py-1">
+                    <a class="list-group-item list-group-item-action list-group-item-light"
+                        [class.active]="selectedSlot === item"
+                        (click)="onSlotSelected(item)">
                             {{item.date | date: 'shortTime'}}
                     </a>                                       
                 </div>
             } 
     </div>
-    <div class="row">
-        <div class="col">
-            <button type="button" class="btn btn-outline-secondary m-1" (click)="updateMyAppointment()">Update my appointment</button>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <button type="button" class="btn btn-success m-1" (click)="updateMyAppointment()">Update</button>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-danger m-1" (click)="onBack()">Back</button>
         </div>
     </div> 
     @if(!selectedSlot || httpErrors)  {
         <div class="row">
             <div class="col">
                 <div class="alert alert-danger" role="alert">
-                    Please select a slot
+                    @if (!selectedSlot) {
+                        Please choose time
+                    }@else {
+                        {{httpErrors}}
+                    }
                 </div>
             </div>
         </div>
     }
 </div>
-

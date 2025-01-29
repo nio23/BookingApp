@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ModalService } from '../../_services/modal.service';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -16,18 +16,17 @@ import { myAppointment } from '../../_models/myAppointment';
   styleUrl: './update-my-appointment.component.css'
 })
 export class UpdateMyAppointmentComponent implements OnInit {
-
   modalService = inject(ModalService);
   appointmentService = inject(AppointmentsService);
 
   myAppointment?: myAppointment;
-  firstAvailableAppointment : Date = new Date();
   freeSlots: Slot[] = [];
-  selectedSlot?: Slot = undefined;
+  selectedSlot: Slot | null = null;
   httpErrors: string[] | undefined;
+  selectedDate: Date = new Date();
 
   ngOnInit(): void {
-    this.getAvailableSlots(new Date());
+    this.getAvailableSlots(this.selectedDate);
   }
 
   onSlotSelected(slot: Slot){
@@ -40,12 +39,11 @@ export class UpdateMyAppointmentComponent implements OnInit {
       map((slots) => slots.filter((slot: Slot) => new Date(slot.date).getTime() > new Date().getTime()))
     ).subscribe((slots) => {
       this.freeSlots = slots;
-      this.firstAvailableAppointment = slots[0].date;
     });
   }
 
   updateMyAppointment() {
-    if(this.myAppointment === undefined || this.selectedSlot === undefined)
+    if(this.myAppointment === undefined || this.selectedSlot === null)
       return;
 
     this.myAppointment.date = this.selectedSlot.date;
@@ -55,20 +53,21 @@ export class UpdateMyAppointmentComponent implements OnInit {
         this.modalService.hideModal();
       },
       error: error => {
+        this.httpErrors = error.error;
         console.log(error);
       }
     });
 
   }
 
-  onDateChange(date: Date) {
-    console.log(date);
-    this.appointmentService.getFreeAppointmentsByDate(date).pipe(
-      map((slots) => slots.filter((slot: Slot) => new Date(slot.date).getTime() > new Date().getTime()))
-    ).subscribe((slots) => {
-      this.freeSlots = slots;
-      console.log(slots);
-    });
+  onDateChange() {
+    console.log(this.selectedDate);
+    this.getAvailableSlots(this.selectedDate);
+    this.selectedSlot = null;
   }
+
+  onBack() {
+    this.modalService.hideModal();
+}
 }
 
