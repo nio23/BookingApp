@@ -15,6 +15,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([jwtInterceptor])),
     provideAnimations(),
-    importProvidersFrom([ModalModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()])
+    importProvidersFrom([ModalModule.forRoot(), TimepickerModule.forRoot()])
   ]
 };

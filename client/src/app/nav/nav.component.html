@@ -13,9 +13,9 @@
           placeholder="Username">
         <input class="form-control me-md-2 my-1" name="password" [(ngModel)]="authentication.password" type="password"
           placeholder="Password">
-        <button class="btn btn-outline-success my-1" type="submit">Login</button>
+        <button class="btn btn-outline-success my-1 mx-1" type="submit">Login</button>
+        <button class="btn btn-outline-secondary my-1 mx-1" type="button" routerLink="/register">Register</button>
       </form>
-      <button class="btn">Register</button>
       }@else {
       <div class="d-flex flex-md-row flex-column align-items-end ms-auto btn-group" dropdown>
         <button id="button-animated" dropdownToggle type="button" class="btn  dropdown-toggle"
