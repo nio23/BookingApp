@@ -28,7 +28,7 @@ export class ModalService {
       initialState: {
         title: 'Book the appointment',
         time: appointment.date,
-        clientName: this.accountService.currentUser()?.userName
+        clientName: this.accountService.currentUser()?.username
       }
     };
     this.bsModalRef = this.modalService.show(BookingConfirmation, initialState);

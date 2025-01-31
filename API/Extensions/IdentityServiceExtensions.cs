@@ -14,6 +14,9 @@ public static class IdentityServiceExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config){
         services.AddIdentityCore<AppUser>(opt => {
             opt.Password.RequireNonAlphanumeric = false;
+            opt.Password.RequiredLength = 4;
+            opt.Password.RequireLowercase = false;
+            opt.Password.RequireUppercase = false;
     })
         .AddRoles<AppRole>()
         .AddRoleManager<RoleManager<AppRole>>()

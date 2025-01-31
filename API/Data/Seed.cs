@@ -64,7 +64,7 @@ public class Seed
             await userManager.AddToRoleAsync(user, "Member");
         }
 
-        var admin = new AppUser{UserName = "admin"};
+        var admin = new AppUser{UserName = "admin", Gender = "male", DateOfBirth = new DateOnly(1999, 09, 11)};
 
         await userManager.CreateAsync(admin, "Pa$$w0rd");
         await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);

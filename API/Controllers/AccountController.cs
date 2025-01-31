@@ -15,7 +15,7 @@ namespace API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if(await UserExists(registerDto.UserName)) 
+            if(await UserExists(registerDto.Username)) 
                 return BadRequest("Username is taken");
             
             var user = mapper.Map<AppUser>(registerDto);
@@ -29,7 +29,7 @@ namespace API.Controllers
                 return BadRequest(result.Errors);
 
             return new UserDto{
-                UserName = user.UserName!,
+                Username = user.UserName!,
                 Email = user.Email!,
                 PhoneNumber = user.PhoneNumber!,
                 Token = await tokenService.CreateToken(user)
@@ -49,7 +49,7 @@ namespace API.Controllers
                 return Unauthorized();
                 
             return new UserDto{
-                UserName = user.UserName,
+                Username = user.UserName,
                 Email = user.Email!,
                 PhoneNumber = user.PhoneNumber!,
                 Token = await tokenService.CreateToken(user)

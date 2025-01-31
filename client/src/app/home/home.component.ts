@@ -8,7 +8,7 @@ import { AccountService } from '../_services/account.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CalendarComponent, AvailableAppointmentsComponent, TimeComponent],
+  imports: [CalendarComponent, AvailableAppointmentsComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

@@ -13,7 +13,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<AppointmentDto, Appointment>();
         //CreateMap<Appointment, AppointmentDto>().ForMember(dest => dest., opt => opt.MapFrom(src => src.AppUser));
         CreateMap<Appointment, AppointmentDto>();
-        CreateMap<RegisterDto, AppUser>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName.ToLower()));
+        CreateMap<RegisterDto, AppUser>().ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Username.ToLower()))
+                                            .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src=> DateOnly.Parse(src.DateOfBirth)));
         CreateMap<string, DateTime>().ConvertUsing(s=> DateTime.Parse(s, null, DateTimeStyles.AdjustToUniversal));
         CreateMap<DateTime, DateTime>();
         CreateMap<AppUser, MemberDto>();
