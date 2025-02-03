@@ -1,6 +1,12 @@
-<div class="container text-center">
-  <div class="row">
-    @for (item of schedule; track $index) {
+<div class="container text-center bg-white rounded-3 shadow">
+  <div class="row justify-content-center">
+    <div class="col">
+      <input type="hidden" name="date"/>
+      <bs-datepicker-inline [bsConfig]="datePickerConfig" [(bsValue)]="selectedDate" (bsValueChange)="onDateChange($event)"></bs-datepicker-inline>
+    </div>
+  </div>
+  <div class="row py-4">
+    @for (item of freeSlots; track $index) {
       <div class=" col-sm-4 col-md-3 col-6">
         <button type="button" class="btn btn-outline-secondary text-nowrap m-1" (click)="openModal(item)">
           {{item.date | date: 'shortTime'}}
@@ -9,19 +15,3 @@
     }
   </div>
 </div>
-
-<!-- <table class="table">
-  <thead>
-    <tr class="row">
-      <th class="col-sm-3" scope="col">Time</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for(item of schedule;track $index ){
-      <tr class="row clickable-row" (click)="openModal(item)">
-        <th class="col-sm-3" scope="row">{{item.date| date: 'shortTime'}}</th>
-      </tr>
-    }
-  </tbody>
-</table> -->
-

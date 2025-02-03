@@ -1,14 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CalendarComponent } from "./calendar/calendar.component";
 import { NavComponent } from "./nav/nav.component";
 import { AccountService } from './_services/account.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CalendarComponent, NavComponent],
+  imports: [RouterOutlet, NavComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

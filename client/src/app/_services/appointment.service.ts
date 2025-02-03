@@ -20,65 +20,46 @@ export class AppointmentsService{
   private hubUrl = environment.hubsUrl;
   private hubConnection?: HubConnection;
 
-  @Input() 
-  private _appointment = signal(new Date());
-  get appointment() {
-    return this._appointment.asReadonly();
-  }
+  // @Input() 
+  // private _appointment = signal(new Date());
+  // get appointment() {
+  //   return this._appointment.asReadonly();
+  // }
   
-  @Input() 
-  private _openTime = computed(()=> {
-    return new Date(this._appointment().setHours(8, 0, 0, 0));
-  });
+  private _openTime = new Date();
+  private _closeTime = new Date();
+  private _appointmentTime = 30;
+
+  
+  // computed(()=> {
+  //   return new Date(this._appointment().setHours(8, 0, 0, 0));
+  // });
   get openTime() {
+    this._openTime.setHours(8, 0, 0, 0);
     return this._openTime;
   }
-  
-  @Input() 
-  private _closeTime = computed(()=> {
-    return new Date(this._appointment().setHours(22, 0, 0, 0));
-  });
+
   get closeTime() {
+    this._closeTime.setHours(22, 0, 0, 0);
     return this._closeTime;
   }  
 
-  @Input() 
-  private _appointmentTime = 30;
   get appointmentTime() {
     return this._appointmentTime;
   }
 
-  @Input()
   private _minDate = new Date();
   get minDate() {
     return this._minDate;
   }
 
-  @Input()
   private _maxDate = new Date();
   get maxDate() {
     this._maxDate.setDate(this._maxDate.getDate() + 30);
     return this._maxDate;
-  }
-  
-
-  @Output() dateChanged = new EventEmitter<Date>();
-  @Output() dataUpdated = new EventEmitter<Appointment>();
-  
+  }  
 
   constructor() {
-
-    effect(() => {
-      console.log(`Service date is: ${this._appointment()}`);
-    });
-
-    this.dateChanged.subscribe({
-      next: (date: Date) => {
-        this.setDate(date);
-      },
-      error: (error: any) => console.log(error),
-      complete: () => console.log('Request has completed')
-    });
     const user = this.accountService.currentUser();
     if(!user) return;
     this.createHubConnection(user);
@@ -97,7 +78,7 @@ export class AppointmentsService{
     this.hubConnection.on('NewAppointment', appointment => {
       //this.schedule.push(appointment);
       console.log('Appointments updated from hub'+appointment);
-      this.dataUpdated.emit(appointment);
+      //this.dataUpdated.emit(appointment);
     });
   }
 
@@ -109,31 +90,11 @@ export class AppointmentsService{
     return this.http.delete(this.baseUrl + 'appointments/'+id);
   }
 
-  setDate(date: Date){
-    const month = date.getMonth();
-    const year = date.getFullYear();
-    const day = date.getDate();
-    this._appointment.update(value => new Date(value.setFullYear(year,month,day)));
-  }
-
-  setTime(date: Date){
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    this._appointment.update(value => new Date(value.setHours(hours, minutes, 0, 0)));
-  }
-
-  setFullDate(date: Date){
-    this.setDate(date);
-    this.setTime(date);
-  }
-
   getAppointmentsByDate(date: Date = new Date(2024,9,18)) {
-    return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(this._appointment()));
+    return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(date));
   }
 
   getFreeAppointmentsByDate(date: Date = new Date()) {
-    if(date === undefined)
-      return this.http.get<Slot[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(this._appointment()));
     return this.http.get<Slot[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(date));
   }
 
