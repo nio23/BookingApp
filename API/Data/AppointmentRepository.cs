@@ -71,7 +71,7 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
 
     public async Task<IEnumerable<T>> GetAppointmentsAsync<T>(int userId)
     {
-        var query = context.Appointments.Include(x=> x.AppUser).OrderByDescending(o => o.Date);
+        var query = context.Appointments.Where(x => x.AppUserId == userId).OrderByDescending(o => o.Date);
 
         if(typeof(T) == typeof(MyAppointmentDto))
         {

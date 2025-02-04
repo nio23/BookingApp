@@ -39,11 +39,8 @@ export class BookingConfirmation implements OnInit {
   }
 
   book(){
-    // const ISOFormat = toISOStringFormat(this.bookForm.value.date);
-    // this.bookForm.patchValue({date: ISOFormat});
     console.log(this.bookForm.value.date);
     this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
-      this.modalService.appointmentBooked.emit();
       this.modalService.hideModal();
     }).catch(error => {
       this.validationError = error;

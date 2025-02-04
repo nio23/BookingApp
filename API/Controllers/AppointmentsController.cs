@@ -97,14 +97,9 @@ namespace API.Controllers
         [HttpGet("my")]
         public async Task<ActionResult<IEnumerable<MyAppointmentDto>>> GetMyAppointments()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.GetUserId();
             
-            if (string.IsNullOrEmpty(userId))
-                {
-                    return Unauthorized("You are not authorized to view this page");
-                }
-
-            var appointments = await appointmentRepository.GetAppointmentsAsync<MyAppointmentDto>(int.Parse(userId));
+            var appointments = await appointmentRepository.GetAppointmentsAsync<MyAppointmentDto>(userId);
 
             var currentDate = DateTime.UtcNow;
             
