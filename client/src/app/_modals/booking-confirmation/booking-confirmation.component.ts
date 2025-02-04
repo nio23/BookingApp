@@ -5,6 +5,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { AppointmentsService } from '../../_services/appointment.service';
 import { toISOStringFormat } from '../../_services/utils';
 import { ModalService } from '../../_services/modal.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-modal',
@@ -16,6 +17,7 @@ import { ModalService } from '../../_services/modal.service';
 export class BookingConfirmation implements OnInit {
   private fb = inject(FormBuilder);
   private appointmentService = inject(AppointmentsService);
+  private toastr = inject(ToastrService);
   modalService = inject(ModalService);
   title?: string;
   closeBtnName?: string;
@@ -42,6 +44,7 @@ export class BookingConfirmation implements OnInit {
     console.log(this.bookForm.value.date);
     this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
       this.modalService.hideModal();
+      this.toastr.success('Appointment booked successfully');
     }).catch(error => {
       this.validationError = error;
       console.log(error);

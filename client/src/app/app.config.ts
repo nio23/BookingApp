@@ -7,6 +7,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { jwtInterceptor } from './_interceptors/jwt.interceptor';
+import { provideToastr } from 'ngx-toastr';
 
 
 
@@ -15,6 +16,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([jwtInterceptor])),
     provideAnimations(),
+    provideToastr({
+      positionClass: 'toast-bottom-right'
+    }),
     importProvidersFrom([ModalModule.forRoot(), TimepickerModule.forRoot()])
   ]
 };

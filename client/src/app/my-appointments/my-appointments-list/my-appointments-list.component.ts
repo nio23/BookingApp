@@ -27,7 +27,7 @@ export class MyAppointmentsListComponent implements OnInit {
       }
     });
 
-    this.modalService.appointmentDeleted.subscribe({
+    this.appointmentService.appointmentDeleted.subscribe({
       next: (id:number) => {
         this.onAppointmentDeleted(id);
       }

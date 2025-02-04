@@ -4,6 +4,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AccountService } from '../_services/account.service';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { RouterLink } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -16,6 +17,7 @@ export class NavComponent {
   accountService = inject(AccountService);
   isMenuCollapsed = true;
   authentication:any = {};
+  private toastr = inject(ToastrService);
 
 
   login(){
@@ -26,6 +28,7 @@ export class NavComponent {
       },
       error: error => {
         console.log(error);
+        this.toastr.error(error.error);
       }
     });
   }

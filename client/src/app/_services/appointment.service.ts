@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, effect, EventEmitter, inject, Injectable, Input, Output, signal } from '@angular/core';
 import { Appointment } from '../_models/appointment';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { toOnlyDateString } from './utils';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
@@ -19,6 +19,9 @@ export class AppointmentsService{
   private baseUrl = environment.apiUrl;
   private hubUrl = environment.hubsUrl;
   private hubConnection?: HubConnection;
+
+  @Output() appointmentDeleted = new EventEmitter<number>();
+  @Output() appointmentBooked = new EventEmitter();
 
   // @Input() 
   // private _appointment = signal(new Date());
@@ -87,7 +90,9 @@ export class AppointmentsService{
   }
 
   deleteAppointment(id: number) {
-    return this.http.delete(this.baseUrl + 'appointments/'+id);
+    return this.http.delete(this.baseUrl + 'appointments/'+id).pipe(
+      tap(() => {this.appointmentDeleted.emit(id);})
+    );
   }
 
   getAppointmentsByDate(date: Date = new Date(2024,9,18)) {

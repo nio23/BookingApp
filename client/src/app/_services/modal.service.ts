@@ -11,10 +11,7 @@ import { UpdateMyAppointmentComponent } from '../_modals/update-my-appointment/u
 @Injectable({
   providedIn: 'root'
 })
-export class ModalService {
-  @Output() appointmentDeleted = new EventEmitter<number>();
-  @Output() appointmentBooked = new EventEmitter();
-  
+export class ModalService {  
   bsModalRef?: BsModalRef;
   modalService = inject(BsModalService);
 

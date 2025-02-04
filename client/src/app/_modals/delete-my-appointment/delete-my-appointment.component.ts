@@ -4,6 +4,7 @@ import { DatePipe, TitleCasePipe} from '@angular/common';
 import { myAppointment } from '../../_models/myAppointment';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { ModalService } from '../../_services/modal.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-delete-my-appointment',
@@ -13,7 +14,7 @@ import { ModalService } from '../../_services/modal.service';
   styleUrl: './delete-my-appointment.component.css'
 })
 export class DeleteMyAppointmentComponent implements OnInit {
-  
+  private toastr = inject(ToastrService);
   modalService = inject(ModalService);
   appointmentService = inject(AppointmentsService);
   appointment?: myAppointment;
@@ -27,8 +28,9 @@ export class DeleteMyAppointmentComponent implements OnInit {
     this.appointmentService.deleteAppointment(this.appointment!!.id).subscribe({
       next: () => {
         console.log('Appointment deleted');
-        this.modalService.appointmentDeleted.emit(this.appointment!!.id);
+        //this.appointmentService.appointmentDeleted.emit(this.appointment!!.id);
         this.hideModal();
+        this.toastr.success('Your appointment deleted');
         //this.myAppointments = this.myAppointments.filter(x => x.id !== id);
       },
       error: error => {
