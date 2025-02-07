@@ -58,6 +58,11 @@ export class AvailableAppointmentsComponent implements OnInit {
   }
   ngOnInit(): void {
     //this.selectedDate.set(this.appointmentService.appointment());
+    this.appointmentService.appointmentBooked.subscribe({
+      next: () => {
+        this.loadAvailable(this.selectedDate);
+      }
+    });
   }
   
   loadAvailable(date: Date){

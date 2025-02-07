@@ -44,6 +44,7 @@ export class BookingConfirmation implements OnInit {
     console.log(this.bookForm.value.date);
     this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
       this.modalService.hideModal();
+      this.appointmentService.appointmentBooked.emit();
       this.toastr.success('Appointment booked successfully');
     }).catch(error => {
       this.validationError = error;
