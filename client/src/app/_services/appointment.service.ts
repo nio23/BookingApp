@@ -21,7 +21,7 @@ export class AppointmentsService{
   private hubConnection?: HubConnection;
 
   @Output() appointmentDeleted = new EventEmitter<number>();
-  @Output() appointmentBooked = new EventEmitter();
+  @Output() appointmentBooked = new EventEmitter<Slot>();
 
   // @Input() 
   // private _appointment = signal(new Date());
@@ -65,7 +65,7 @@ export class AppointmentsService{
   constructor() {
     const user = this.accountService.currentUser();
     if(!user) return;
-    this.createHubConnection(user);
+    //this.createHubConnection(user);
 
   }
 
@@ -79,9 +79,7 @@ export class AppointmentsService{
 
     this.hubConnection.start().catch(error => console.log(error));
     this.hubConnection.on('NewAppointment', appointment => {
-      //this.schedule.push(appointment);
       console.log('Appointments updated from hub'+appointment);
-      //this.dataUpdated.emit(appointment);
     });
   }
 
@@ -107,9 +105,12 @@ export class AppointmentsService{
     return this.http.get<myAppointment[]>(this.baseUrl + 'appointments/my');
   }
 
-  async bookAppointment(model: any) {
-    return this.hubConnection?.invoke('AddAppointment', model);
-    //return this.http.post(this.baseUrl + 'appointments/add', model);
+  // async bookAppointment(model: any) {
+  //   return this.hubConnection?.invoke('AddAppointment', model);
+  // }
+
+  bookAppointment(model: any) {
+    return this.http.post<Slot>(this.baseUrl + 'appointments/new', model);
   }
 
   updateAppointment(model: myAppointment) {

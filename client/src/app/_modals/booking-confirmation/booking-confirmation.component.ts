@@ -6,6 +6,7 @@ import { AppointmentsService } from '../../_services/appointment.service';
 import { toISOStringFormat } from '../../_services/utils';
 import { ModalService } from '../../_services/modal.service';
 import { ToastrService } from 'ngx-toastr';
+import { Slot } from '../../_models/slot';
 
 @Component({
   selector: 'app-modal',
@@ -42,13 +43,17 @@ export class BookingConfirmation implements OnInit {
 
   book(){
     console.log(this.bookForm.value.date);
-    this.appointmentService.bookAppointment(this.bookForm.value).then(() => {
-      this.modalService.hideModal();
-      this.appointmentService.appointmentBooked.emit();
-      this.toastr.success('Appointment booked successfully');
-    }).catch(error => {
-      this.validationError = error;
-      console.log(error);
+    this.appointmentService.bookAppointment(this.bookForm.value).subscribe({
+      next: (slot: Slot) => {
+        this.modalService.hideModal();
+        this.appointmentService.appointmentBooked.emit(slot);
+        this.toastr.success('Appointment booked successfully');
+      },
+      error: error => {
+        this.validationError = error.error;
+        console.log(error);
+      }
+      
     });
   }
   

@@ -146,8 +146,7 @@ namespace API.Controllers
             }
 
             var result = new {
-                //2009-06-15T13:45:30 -> 2009-06-15 13:45:30Z
-                Date = appointment.Date.ToString("u")
+                Date = appointment.Date
             };
 
             return Ok(result);

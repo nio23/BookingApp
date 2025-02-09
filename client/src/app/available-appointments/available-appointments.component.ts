@@ -7,7 +7,6 @@ import { ModalService } from '../_services/modal.service';
 import { Slot } from '../_models/slot';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule, FormsModule, FormBuilder } from '@angular/forms';
-import { isCurrentDay } from '../_services/utils';
 
 @Component({
   selector: 'app-appointments-list',
@@ -26,41 +25,15 @@ export class AvailableAppointmentsComponent implements OnInit {
   private appointmentTime = this.appointmentService.appointmentTime;
   private fb = inject(FormBuilder);
   selectedDate = new Date();
-  //selectedDate = signal(new Date());
   
   constructor() {
-    this.datePickerConfig = Object.assign({}, { showWeekNumbers: false, showTodayButton: true});
-    effect(() => {
-      //this.schedule = this.loadEmptySchedule();
-    });
-    // this.appointmentService.dateChanged.subscribe({
-    //   next: () => {
-    //     this.loadAvailable();
-    //   }
-    // });
-
-    // this.appointmentService.dataUpdated.subscribe({
-    //   next: (appointment:Appointment) => {
-    //     const currentSelectedDate = this.appointmentService.appointment();
-    //     const localDate = new Date(appointment.date);
-    //     if(!this.isTheSameDate(currentSelectedDate, localDate)){
-    //       return;
-    //     }
-    //     console.log("Appointment is the same date ");
-    //     const matchingTime = this.schedule.find(slot => this.getDayTimeOnMinutes(slot.date) === this.getDayTimeOnMinutes(localDate));
-    //     if (matchingTime){ 
-    //       matchingTime.clientName = appointment.clientName;
-    //       matchingTime.id = appointment.id;
-    //     }
-    //   }
-    // });
-    
+    this.datePickerConfig = Object.assign({}, { showWeekNumbers: false, showTodayButton: true});    
   }
+
   ngOnInit(): void {
-    //this.selectedDate.set(this.appointmentService.appointment());
     this.appointmentService.appointmentBooked.subscribe({
-      next: () => {
-        this.loadAvailable(this.selectedDate);
+      next: (slot: Slot) => {
+        this.freeSlots = this.freeSlots.filter(x => x.date !== slot.date);
       }
     });
   }
