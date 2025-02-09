@@ -35,9 +35,7 @@ export class UpdateMyAppointmentComponent implements OnInit {
   }
 
   getAvailableSlots(date: Date) {
-    this.appointmentService.getFreeAppointmentsByDate(date).pipe(
-      map((slots) => slots.filter((slot: Slot) => new Date(slot.date).getTime() > new Date().getTime()))
-    ).subscribe((slots) => {
+    this.appointmentService.getFreeAppointmentsByDate(date).subscribe((slots) => {
       this.freeSlots = slots;
     });
   }

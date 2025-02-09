@@ -49,10 +49,7 @@ export class AvailableAppointmentsComponent implements OnInit {
   }
 
   onDateChange(date: Date){
-
-    console.log(`Calendar date is: ${this.selectedDate}`);
     this.loadAvailable(date);
-
   }
   
   

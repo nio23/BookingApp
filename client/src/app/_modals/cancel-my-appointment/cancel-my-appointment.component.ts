@@ -1,19 +1,18 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
-import { DatePipe, TitleCasePipe} from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { myAppointment } from '../../_models/myAppointment';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { ModalService } from '../../_services/modal.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-delete-my-appointment',
+  selector: 'app-cancel-my-appointment',
   standalone: true,
   imports: [DatePipe],
-  templateUrl: './delete-my-appointment.component.html',
-  styleUrl: './delete-my-appointment.component.css'
+  templateUrl: './cancel-my-appointment.component.html',
+  styleUrl: './cancel-my-appointment.component.css'
 })
-export class DeleteMyAppointmentComponent implements OnInit {
+export class CancelMyAppointmentComponent implements OnInit {
   private toastr = inject(ToastrService);
   modalService = inject(ModalService);
   appointmentService = inject(AppointmentsService);
@@ -24,7 +23,7 @@ export class DeleteMyAppointmentComponent implements OnInit {
     console.log("Modal initialized"+this.appointment?.id+" "+this.appointment?.date);
   }
 
-  deleteAppointment() {
+  cancelAppointment() {
     this.appointmentService.deleteAppointment(this.appointment!!.id).subscribe({
       next: () => {
         console.log('Appointment deleted');

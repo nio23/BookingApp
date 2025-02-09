@@ -40,8 +40,8 @@ export class MyAppointmentsListComponent implements OnInit {
 
 
 
-  openDeleteConfirmationModal(appointment: myAppointment) {
-    this.modalService.openDeleteConfirmationModal(appointment);
+  openCancelConfirmationModal(appointment: myAppointment) {
+    this.modalService.openCancelConfirmationModal(appointment);
 
   }
 

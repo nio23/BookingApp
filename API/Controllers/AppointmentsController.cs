@@ -41,35 +41,40 @@ namespace API.Controllers
         [AllowAnonymous]
         [HttpGet("free/{date}")]
         public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetFreeSlots(string date){
-            var selectedDate = DateTime.Parse(date);
+            var selectedDate = mapper.Map<DateTime>(date);
 
-            // if(selectedDate < DateTime.Today)
-            // {
-            //     return BadRequest("You can't request a date in the past");
-            // }
+            if(selectedDate.Date < DateTime.UtcNow.Date)
+            {
+                return BadRequest("You can't request a date in the past");
+            }
+
+
 
             var appointments = await appointmentRepository.GetAppointmentsByDateAsync(date);
-            var firstAppointment = bookingSettings.Value.OpenTime;
-            var lastAppointment = bookingSettings.Value.CloseTime;
+            var firstSlot = bookingSettings.Value.OpenTime;
+            var lastSlot = bookingSettings.Value.CloseTime;
             var appointmentTime = Convert.ToDouble(bookingSettings.Value.AppointmentTime);
             var freeSlots = new List<Slot>();
 
-            var currentAppointment = TimeOnly.FromDateTime(selectedDate);
-            currentAppointment = currentAppointment.AddHours(firstAppointment.Hour);
-            currentAppointment = currentAppointment.AddMinutes(firstAppointment.Minute);
+            if(selectedDate.Date == DateTime.UtcNow.Date){
+                var currentTime = TimeOnly.FromDateTime(DateTime.UtcNow);
+                firstSlot = currentTime.Minute % appointmentTime == 0 ? currentTime : currentTime.AddMinutes(appointmentTime - (currentTime.Minute % appointmentTime));
+            }
+
+            var currentSlot = firstSlot;
 
             //Create a list of free slots
-            while(currentAppointment < lastAppointment)
+            while(currentSlot < lastSlot)
             {
                 //If there is no appointment at this time, add it to the list
-                if(!appointments.Any(a => TimeOnly.FromDateTime(a.Date) == currentAppointment))
+                if(!appointments.Any(a => TimeOnly.FromDateTime(a.Date) == currentSlot))
                 {
-                    var dt = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, currentAppointment.Hour, currentAppointment.Minute, 0, DateTimeKind.Utc);
+                    var dt = new DateTime(selectedDate.Year, selectedDate.Month, selectedDate.Day, currentSlot.Hour, currentSlot.Minute, 0, DateTimeKind.Utc);
                     freeSlots.Add(new Slot{
                         Date = dt
                     });
                 }
-                currentAppointment = currentAppointment.AddMinutes(appointmentTime);
+                currentSlot = currentSlot.AddMinutes(appointmentTime);
             }
 
             if(!freeSlots.Any())
@@ -100,12 +105,10 @@ namespace API.Controllers
             var userId = User.GetUserId();
             
             var appointments = await appointmentRepository.GetAppointmentsAsync<MyAppointmentDto>(userId);
-
-            var currentDate = DateTime.UtcNow;
             
             var result = appointments.Select(a => {
                 var appointmentDate = mapper.Map<string, DateTime>(a.Date);
-                a.canUpdate = appointmentDate - TimeSpan.FromHours(1) > currentDate ;
+                a.CanUpdateOrDelete = AppointmentHelper.CanUpdateOrDelete(appointmentDate);  
                 return a;
             });
 
@@ -170,16 +173,15 @@ namespace API.Controllers
                 return Unauthorized("You are not authorized to delete this appointment");
             }
 
-            var currentDate = DateTime.UtcNow;
-            if(appointment.Date < currentDate)
+            if(AppointmentHelper.CanUpdateOrDelete(appointment.Date))
             {
-                return BadRequest("You can't delete an appointment in the past");
+                return BadRequest("You can't cancel an appointment in the past or within 10 minutes of the appointment time");
             }
 
             appointmentRepository.DeleteAppointment(appointment);    
             if(!await appointmentRepository.SaveChangesAsync())
             {
-                return BadRequest("Failed to delete the appointment");
+                return BadRequest("Failed to cancel the appointment");
             }
             return Ok();
         }
@@ -214,10 +216,14 @@ namespace API.Controllers
                 return BadRequest("There is already an appointment at this time");
             }
 
-            if(appointment.Date - TimeSpan.FromHours(1) < DateTime.UtcNow)
+            if(!AppointmentHelper.CanUpdateOrDelete(appointment.Date))
             {
-                return BadRequest("You can only update your appointment at least 1 hour before the appointment");
+                return BadRequest("You can't update an appointment in the past or within 10 minutes of the appointment time");
             }
+            // if(!AppointmentHelper.CanUpdateOrDelete(appointment.Date))
+            // {
+            //     return BadRequest("You can only update your appointment at least 15 minutes before the appointment");
+            // }
 
             mapper.Map(updateAppointmentDto, appointment); 
 

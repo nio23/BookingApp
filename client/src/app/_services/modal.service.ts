@@ -4,7 +4,7 @@ import { BookingConfirmation } from '../_modals/booking-confirmation/booking-con
 import { Appointment } from '../_models/appointment';
 import { Slot } from '../_models/slot';
 import { AccountService } from './account.service';
-import { DeleteMyAppointmentComponent } from '../_modals/delete-my-appointment/delete-my-appointment.component';
+import { CancelMyAppointmentComponent } from '../_modals/cancel-my-appointment/cancel-my-appointment.component';
 import { myAppointment } from '../_models/myAppointment';
 import { UpdateMyAppointmentComponent } from '../_modals/update-my-appointment/update-my-appointment.component';
 import { ToastrService } from 'ngx-toastr';
@@ -34,13 +34,13 @@ export class ModalService {
     this.bsModalRef = this.modalService.show(BookingConfirmation, initialState);
   }
 
-  openDeleteConfirmationModal(appointment: myAppointment){
+  openCancelConfirmationModal(appointment: myAppointment){
     const initialState: ModalOptions = {
       initialState: {
         appointment: appointment,
       }
     };
-    this.bsModalRef = this.modalService.show(DeleteMyAppointmentComponent, initialState);
+    this.bsModalRef = this.modalService.show(CancelMyAppointmentComponent, initialState);
   }
 
   openUpdateAppointmentModal(appointment: myAppointment){

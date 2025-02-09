@@ -45,6 +45,12 @@ public static class AppointmentHelper
 
         return TimeIsValid(date, appointmentTime, openTime, closeTime);
     }
-    
+
+
+    public static bool CanUpdateOrDelete(DateTime appointmentDate)
+    {
+        return appointmentDate - TimeSpan.FromMinutes(10d) > DateTime.UtcNow ;
+    }
+
 
 }
