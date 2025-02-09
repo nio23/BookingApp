@@ -1,14 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, effect, EventEmitter, inject, Injectable, Input, Output, signal } from '@angular/core';
+import { EventEmitter, inject, Injectable, Output } from '@angular/core';
 import { Appointment } from '../_models/appointment';
-import { Observable, Subject, tap } from 'rxjs';
-import { toOnlyDateString } from './utils';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
 import { AccountService } from './account.service';
 import { myAppointment } from '../_models/myAppointment';
 import { Slot } from '../_models/slot';
+import { map, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -89,7 +88,7 @@ export class AppointmentsService{
 
   deleteAppointment(id: number) {
     return this.http.delete(this.baseUrl + 'appointments/'+id).pipe(
-      tap(() => {this.appointmentDeleted.emit(id);})
+      tap({next:() => this.appointmentDeleted.emit(id)})
     );
   }
 

@@ -3,7 +3,6 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { DatePipe, TitleCasePipe} from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentsService } from '../../_services/appointment.service';
-import { toISOStringFormat } from '../../_services/utils';
 import { ModalService } from '../../_services/modal.service';
 import { ToastrService } from 'ngx-toastr';
 import { Slot } from '../../_models/slot';
