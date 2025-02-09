@@ -7,7 +7,7 @@ import { User } from '../_models/user';
 import { AccountService } from './account.service';
 import { myAppointment } from '../_models/myAppointment';
 import { Slot } from '../_models/slot';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

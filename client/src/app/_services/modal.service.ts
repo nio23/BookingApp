@@ -7,6 +7,7 @@ import { AccountService } from './account.service';
 import { DeleteMyAppointmentComponent } from '../_modals/delete-my-appointment/delete-my-appointment.component';
 import { myAppointment } from '../_models/myAppointment';
 import { UpdateMyAppointmentComponent } from '../_modals/update-my-appointment/update-my-appointment.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +15,15 @@ import { UpdateMyAppointmentComponent } from '../_modals/update-my-appointment/u
 export class ModalService {  
   bsModalRef?: BsModalRef;
   modalService = inject(BsModalService);
-
-  
-  constructor(private accountService: AccountService){}
+  private accountService = inject(AccountService);
+  private toastr = inject(ToastrService);
 
 
   openBookingConfirmationModal(appointment: Slot) {
-    
+    if(!this.accountService.currentUser()){
+      this.toastr.error('You need to be logged in to book an appointment');
+      return;
+    }
     const initialState: ModalOptions = {
       initialState: {
         title: 'Book the appointment',

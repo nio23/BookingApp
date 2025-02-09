@@ -1,12 +1,11 @@
-import { Component, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AppointmentsService } from '../_services/appointment.service';
 import { Appointment } from '../_models/appointment';
-import { CommonModule, DatePipe } from '@angular/common';
-import { map } from 'rxjs';
+import { CommonModule } from '@angular/common';
 import { ModalService } from '../_services/modal.service';
 import { Slot } from '../_models/slot';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { ReactiveFormsModule, FormsModule, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-appointments-list',
@@ -23,7 +22,6 @@ export class AvailableAppointmentsComponent implements OnInit {
   private closeTime = this.appointmentService.closeTime;
   private openTime = this.appointmentService.openTime;
   private appointmentTime = this.appointmentService.appointmentTime;
-  private fb = inject(FormBuilder);
   selectedDate = new Date();
   
   constructor() {
@@ -78,7 +76,7 @@ export class AvailableAppointmentsComponent implements OnInit {
     return date.getHours() * 60 + date.getMinutes();
   }
 
-  openModal(appointment: Slot){ 
+  openModal(appointment: Slot){
     console.log("Opening modal "+appointment.date);
     this.modalService.openBookingConfirmationModal(appointment);
   }
