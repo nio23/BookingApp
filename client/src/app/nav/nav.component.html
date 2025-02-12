@@ -22,6 +22,9 @@
             <ul class="navbar-nav">
               <li class="nav-item"><a routerLink="/my-appointments" class="nav-link">My appointments</a></li>
             </ul>
+            <ul *appHasRole="['Admin', 'Moderator']" class="navbar-nav">
+              <li class="nav-item"><a routerLink="/schedule" class="nav-link">Schedule</a></li>
+            </ul>
             <ul class="navbar-nav ms-auto">
               <li class="nav-item"><a href="" class="nav-link" (click)="logout()">Logout</a></li>
             </ul>

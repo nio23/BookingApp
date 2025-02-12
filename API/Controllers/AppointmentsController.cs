@@ -23,24 +23,17 @@ namespace API.Controllers
         //Open time and close time are on UTC time
         private readonly BookingSettings BookingSettings = bookingSettings.Value;
 
-        //[Authorize(Roles ="Admin, Moderator")]
-        // [HttpGet]
-        // public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
-        // {
-        //     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
-        //     if (string.IsNullOrEmpty(userId))
-        //         {
-        //             return Unauthorized("User ID not found in claims");
-        //         }
-
-        //     var appointments = await appointmentRepository.GetAppointmentsAsync(int.Parse(userId));
-        //     return Ok(appointments);
-        // }
+        [Authorize(Roles ="Admin, Moderator")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetAppointments()
+        {
+            var appointments = await appointmentRepository.GetAppointmentsAsync<AppointmentDto>(null);
+            return Ok(appointments);
+        }
 
         [AllowAnonymous]
         [HttpGet("free/{date}")]
-        public async Task<ActionResult<IEnumerable<AppointmentDto>>> GetFreeSlots(string date){
+        public async Task<ActionResult<IEnumerable<Slot>>> GetFreeSlots(string date){
             var selectedDate = mapper.Map<DateTime>(date);
 
             if(selectedDate.Date < DateTime.UtcNow.Date)
@@ -173,7 +166,7 @@ namespace API.Controllers
                 return Unauthorized("You are not authorized to delete this appointment");
             }
 
-            if(AppointmentHelper.CanUpdateOrDelete(appointment.Date))
+            if(!AppointmentHelper.CanUpdateOrDelete(appointment.Date))
             {
                 return BadRequest("You can't cancel an appointment in the past or within 10 minutes of the appointment time");
             }

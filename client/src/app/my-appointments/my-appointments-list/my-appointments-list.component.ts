@@ -4,6 +4,8 @@ import { AppointmentsService } from '../../_services/appointment.service';
 import { myAppointment } from '../../_models/myAppointment';
 import { CommonModule } from '@angular/common';
 import { ModalService } from '../../_services/modal.service';
+import { AccountService } from '../../_services/account.service';
+import { Appointment } from '../../_models/appointment';
 
 @Component({
   selector: 'app-my-appointments-list',
@@ -14,7 +16,8 @@ import { ModalService } from '../../_services/modal.service';
 })
 export class MyAppointmentsListComponent implements OnInit {
   appointmentService = inject(AppointmentsService);
-  myAppointments: myAppointment[] = [];
+  accountService = inject(AccountService)
+  myAppointments: myAppointment[]= [];
   modalService = inject(ModalService);
 
   ngOnInit(): void {

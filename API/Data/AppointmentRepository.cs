@@ -69,16 +69,20 @@ public class AppointmentRepository(DataContext context, IMapper mapper) : IAppoi
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<T>> GetAppointmentsAsync<T>(int userId)
+    public async Task<IEnumerable<T>> GetAppointmentsAsync<T>(int? userId)
     {
-        var query = context.Appointments.Where(x => x.AppUserId == userId).OrderByDescending(o => o.Date);
+        IQueryable<Appointment> query = context.Appointments;
 
-        if(typeof(T) == typeof(MyAppointmentDto))
+        if(userId == null)
         {
-            return (await query.ProjectTo<MyAppointmentDto>(mapper.ConfigurationProvider).ToListAsync() as IEnumerable<T>) ?? Enumerable.Empty<T>();
+            query = query.Include(u=>u.AppUser);
+        }else{
+            query = query.Where(x => x.AppUserId == userId);
         }
 
-        return (await query.ToListAsync() as IEnumerable<T>) ?? Enumerable.Empty<T>();
+        query = query.OrderByDescending(o => o.Date);
+        return (await query.ProjectTo<T>(mapper.ConfigurationProvider).ToListAsync() as IEnumerable<T>) ?? Enumerable.Empty<T>();
+
 
     }
 

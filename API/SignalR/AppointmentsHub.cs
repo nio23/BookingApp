@@ -54,7 +54,7 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
             throw new HubException("Failed to book the appointment");
         }
 
-        await Clients.All.SendAsync("NewAppointment", mapper.Map<AppointmentDto>(appointment));
+        await Clients.All.SendAsync("NewAppointment", mapper.Map<MyAppointmentDto>(appointment));
     }
 
     public async Task DeleteAppointment(int id)

@@ -9,5 +9,5 @@ public class AppointmentDto
     public int? Id { get; set; }
     [Required]
     public string Date { get; set; } = string.Empty;
-    //public MemberDto? User { get; set; } 
+    public MemberDto? User { get; set; } 
 }
