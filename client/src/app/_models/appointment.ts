@@ -1,5 +1,8 @@
+import { Member } from "./member"
+
 export interface Appointment {
     id?: number
     date: Date
-    clientName: string
+    canUpdateOrDelete?: boolean
+    user?: Member
 }

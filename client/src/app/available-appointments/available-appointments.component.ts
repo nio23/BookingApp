@@ -64,7 +64,7 @@ export class AvailableAppointmentsComponent implements OnInit {
     for(let i = 0; i < numberOfAppointmentsOnDay; i++){
       const d = new Date(this.openTime);
       d.setMinutes(d.getMinutes()+this.appointmentTime * i);
-      schedule.push({date: d, clientName: "" });
+      schedule.push({date: d});
     }
     return schedule;
   }

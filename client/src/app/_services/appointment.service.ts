@@ -5,7 +5,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
 import { AccountService } from './account.service';
-import { myAppointment } from '../_models/myAppointment';
+import { MyAppointment } from '../_models/myAppointment';
 import { Slot } from '../_models/slot';
 import { tap } from 'rxjs';
 
@@ -101,7 +101,7 @@ export class AppointmentsService{
   }
 
   getMyAppointments() {
-    return this.http.get<myAppointment[]>(this.baseUrl + 'appointments/my');
+    return this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/my');
   }
 
   // async bookAppointment(model: any) {
@@ -112,7 +112,7 @@ export class AppointmentsService{
     return this.http.post<Slot>(this.baseUrl + 'appointments/new', model);
   }
 
-  updateAppointment(model: myAppointment) {
+  updateAppointment(model: MyAppointment) {
     return this.http.put(this.baseUrl + 'appointments/', model);
   }
 

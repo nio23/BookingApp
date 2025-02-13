@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { myAppointment } from '../../_models/myAppointment';
+import { MyAppointment } from '../../_models/myAppointment';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { ModalService } from '../../_services/modal.service';
 import { ToastrService } from 'ngx-toastr';
@@ -16,7 +16,7 @@ export class CancelMyAppointmentComponent implements OnInit {
   private toastr = inject(ToastrService);
   modalService = inject(ModalService);
   appointmentService = inject(AppointmentsService);
-  appointment?: myAppointment;
+  appointment?: MyAppointment;
   error: string | undefined;
 
   ngOnInit(): void {
