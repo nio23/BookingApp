@@ -1,0 +1,66 @@
+.clickable-row:hover {
+    cursor: pointer;
+}
+
+:root {
+  --dark-body: #4d4c5a;
+  --dark-main: #141529;
+  --dark-second: #79788c;
+  --dark-hover: #323048;
+  --dark-text: #f8fbff;
+
+  --light-body: #f3f8fe;
+  --light-main: #fdfdfd;
+  --light-second: #c3c2c8;
+  --light-hover: #edf0f5;
+  --light-text: #151426;
+
+  --blue: #0000ff;
+  --white: #fff;
+
+}
+
+:host ::ng-deep .bs-datepicker {
+  box-shadow: none;
+}
+
+:host ::ng-deep .bs-datepicker-body td{
+  /* padding: 8px; */
+  border: 1px solid rgba(198, 255, 187, 0.596);
+}
+
+
+@media (min-width: 576px) {
+  :host ::ng-deep .bs-datepicker-body td {
+    padding: 10px;
+  }
+}
+
+
+@media (min-width: 768px) {
+  :host ::ng-deep .bs-datepicker-body td {
+      padding: 12px;
+  }
+}
+
+
+@media (min-width: 992px) {
+  :host ::ng-deep .bs-datepicker-body td {
+      padding: 14px;
+  }
+}
+
+
+@media (min-width: 1200px) {
+  :host ::ng-deep .bs-datepicker-body td {
+      padding: 16px;
+  }
+} 
+
+:host ::ng-deep .ng-star-inserted td:hover{
+  background-color: var(--light-hover);
+}
+
+:host ::ng-deep .ng-star-inserted span:hover{
+  background-color: transparent !important;
+} 

@@ -6,11 +6,12 @@ import { ModalService } from '../_services/modal.service';
 import { Slot } from '../_models/slot';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { CalendarComponent } from "../calendar/calendar.component";
 
 @Component({
-  selector: 'app-appointments-list',
+  selector: 'app-available-appointments',
   standalone: true,
-  imports: [CommonModule, BsDatepickerModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, BsDatepickerModule, ReactiveFormsModule, FormsModule, CalendarComponent],
   templateUrl: './available-appointments.component.html',
   styleUrl: './available-appointments.component.css'
 })

@@ -1,1 +1,16 @@
-<p>schedule works!</p>
+<div class="container text-center bg-white rounded-3 shadow">
+    <div class="row justify-content-center">
+        <div class="col">
+            <app-calendar (dateChanged)="loadSchedule($event)"></app-calendar>
+        </div>
+    </div>
+    <div class="row py-4">
+        @for (item of schedule; track $index) {
+          <div class="col-sm-4 col-md-3 col-6">
+            <button type="button" class="btn btn-outline-secondary text-nowrap m-1">
+              {{item.date | date: 'shortTime'}}
+            </button> 
+          </div>
+        }
+      </div>
+</div>

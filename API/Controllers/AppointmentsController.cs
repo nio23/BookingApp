@@ -41,8 +41,6 @@ namespace API.Controllers
                 return BadRequest("You can't request a date in the past");
             }
 
-
-
             var appointments = await appointmentRepository.GetAppointmentsByDateAsync(date);
             var firstSlot = bookingSettings.Value.OpenTime;
             var lastSlot = bookingSettings.Value.CloseTime;
@@ -82,9 +80,9 @@ namespace API.Controllers
         {
             var appointments = await appointmentRepository.GetAppointmentsByDateAsync(date);
 
-            if(appointments.Count() == 0)
+            if(!appointments.Any())
             {
-                return NotFound();
+                return Ok();
             }
 
             var appointmentsToReturn = mapper.Map<IEnumerable<AppointmentDto>>(appointments);

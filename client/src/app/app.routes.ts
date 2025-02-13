@@ -16,6 +16,6 @@ export const routes: Routes = [
     {path:'register', component: RegisterComponent},
     {path:'server-error', component: ServerErrorComponent},
     {path:'not-found', component: NotFoundComponent},
-    {path:'schedule', component: MyAppointmentsListComponent, canActivate:[authGuard, adminGuard]},
+    {path:'schedule', component: ScheduleComponent, canActivate:[authGuard, adminGuard]},
     {path:'**', component:HomeComponent, pathMatch: 'full'}
 ];
