@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, input, model, OnInit } from '@angular/core';
 import { AccordionComponent, AccordionPanelComponent } from 'ngx-bootstrap/accordion';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { MyAppointment } from '../../_models/myAppointment';
@@ -18,33 +18,46 @@ import { AppointmentTypePipe } from '../../_pipes/appointment-type.pipe';
 export class MyAppointmentsListComponent implements OnInit {
   appointmentService = inject(AppointmentsService);
   accountService = inject(AccountService)
-  myAppointments: (MyAppointment[] | Appointment[]) = [];
+  myAppointments = model<MyAppointment[] | Appointment[]>();
   modalService = inject(ModalService);
 
   ngOnInit(): void {
+    if(!(this.myAppointments() === undefined))
+      return;
+    
+    console.log('getting appointments');
+
     if(this.accountService.hasAdminRole()){
-      this.appointmentService.getAppointments().subscribe({
-        next: appointments => {
-          this.myAppointments = appointments;
-        },
-        error: error => {
-          console.log(error);
-        }
-      });
+      this.getAppointments();
     }else{
-      this.appointmentService.getMyAppointments().subscribe({
-        next: appointments => {
-          this.myAppointments = appointments;
-        },
-        error: error => {
-          console.log(error);
-        }
-      });
+      this.getMyAppointments();
     }
 
     this.appointmentService.appointmentDeleted.subscribe({
       next: (id:number) => {
         this.onAppointmentDeleted(id);
+      }
+    });
+  }
+
+  getAppointments(){
+    this.appointmentService.getAppointments().subscribe({
+      next: appointments => {
+        this.myAppointments.set(appointments);
+      },
+      error: error => {
+        console.log(error);
+      }
+    });
+  }
+
+  getMyAppointments(){
+    this.appointmentService.getMyAppointments().subscribe({
+      next: appointments => {
+        this.myAppointments.set(appointments);
+      },
+      error: error => {
+        console.log(error);
       }
     });
   }
@@ -61,8 +74,8 @@ export class MyAppointmentsListComponent implements OnInit {
   }
 
   onAppointmentDeleted(id: number) {
-    this.myAppointments.map(() => {
-      this.myAppointments.filter(x => x.id !== id);
+    this.myAppointments()?.map(() => {
+      this.myAppointments()?.filter(x => x.id !== id);
     });
   }
 

@@ -3,11 +3,12 @@ import { CalendarComponent } from "../../calendar/calendar.component";
 import { AppointmentsService } from '../../_services/appointment.service';
 import { Appointment } from '../../_models/appointment';
 import { CommonModule } from '@angular/common';
+import { MyAppointmentsListComponent } from '../../my-appointments/my-appointments-list/my-appointments-list.component';
 
 @Component({
   selector: 'app-schedule',
   standalone: true,
-  imports: [CalendarComponent, CommonModule],
+  imports: [CalendarComponent, CommonModule, MyAppointmentsListComponent],
   templateUrl: './schedule.component.html',
   styleUrl: './schedule.component.css'
 })

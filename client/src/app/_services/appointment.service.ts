@@ -82,7 +82,10 @@ export class AppointmentsService{
     });
   }
 
-  getAppointments() {
+  getAppointments(date?: Date) {
+    if(date) {
+      return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(date));
+    }
     return this.http.get<Appointment[]>(this.baseUrl + 'appointments');
   }
 
