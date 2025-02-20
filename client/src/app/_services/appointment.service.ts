@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { EventEmitter, inject, Injectable, Output } from '@angular/core';
+import { EventEmitter, inject, Injectable, OnInit, Output, signal } from '@angular/core';
 import { Appointment } from '../_models/appointment';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
@@ -17,16 +17,15 @@ export class AppointmentsService{
   private accountService = inject(AccountService);
   private baseUrl = environment.apiUrl;
   private hubUrl = environment.hubsUrl;
-  private hubConnection?: HubConnection;
+  hubConnection?: HubConnection;
 
   @Output() appointmentDeleted = new EventEmitter<number>();
   @Output() appointmentBooked = new EventEmitter<Slot>();
 
-  // @Input() 
-  // private _appointment = signal(new Date());
-  // get appointment() {
-  //   return this._appointment.asReadonly();
-  // }
+  private _appointments = signal<MyAppointment[] | Appointment[]>([]);
+  get appointments() {
+    return this._appointments;
+  }
   
   private _openTime = new Date();
   private _closeTime = new Date();
@@ -64,7 +63,9 @@ export class AppointmentsService{
   constructor() {
     const user = this.accountService.currentUser();
     if(!user) return;
-    //this.createHubConnection(user);
+    this.createHubConnection(user);
+
+    this.getMyAppointments();
 
   }
 
@@ -76,13 +77,13 @@ export class AppointmentsService{
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start().catch(error => console.log(error));
-    this.hubConnection.on('NewAppointment', appointment => {
-      console.log('Appointments updated from hub'+appointment);
-    });
+    // this.hubConnection.start().catch(error => console.log(error));
+    // this.hubConnection.on('NewAppointment', appointment => {
+    //   console.log('Appointments updated from hub'+appointment);
+    // });
   }
 
-  getAppointments(date?: Date) {
+  private getAppointments(date?: Date) {
     if(date) {
       return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(date));
     }
@@ -104,7 +105,26 @@ export class AppointmentsService{
   }
 
   getMyAppointments() {
-    return this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/my');
+    if(this.accountService.hasAdminRole()){
+      this.getAppointments().subscribe({
+        next: appointments => {
+          this._appointments.set(appointments);
+      },
+        error: error => {
+          console.log(error);
+        }
+      });
+    }else{
+      this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/my').subscribe({
+        next: appointments => {
+          this._appointments.set(appointments);
+        },
+        error: error => {
+          console.log(error);
+        }
+      });
+    }
+    
   }
 
   // async bookAppointment(model: any) {

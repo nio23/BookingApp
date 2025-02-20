@@ -54,20 +54,33 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
             throw new HubException("Failed to book the appointment");
         }
 
-        await Clients.All.SendAsync("NewAppointment", mapper.Map<MyAppointmentDto>(appointment));
+        var result = mapper.Map<MyAppointmentDto>(appointment);
+        result.CanUpdateOrDelete = AppointmentHelper.CanUpdateOrDelete(appointment.Date);
+
+        await Clients.All.SendAsync("NewAppointment", result);
     }
 
     public async Task DeleteAppointment(int id)
     {
-        var appointment = await appointmentRepository.FindAppointmentAsync(id);
-        if (appointment == null)
+        var user = Context.User ?? throw new HubException("User context is null");
+
+        var userId = user.GetUserId();
+
+        var appointment = await appointmentRepository.FindAppointmentAsync(id) ?? throw new HubException("Appointment not found");
+
+        if(appointment.AppUserId != userId)
         {
-            throw new HubException("Appointment not found");
+            throw new HubException("You are not authorized to delete this appointment");
         }
 
-        appointmentRepository.DeleteAppointment(appointment);    
+        appointmentRepository.DeleteAppointment(appointment);
 
-        await Clients.All.SendAsync("AppointmentDeleted", id);
+        if(!await appointmentRepository.SaveChangesAsync())
+        {
+            throw new HubException("Failed to cancel the appointment");
+        }    
+
+        await Clients.All.SendAsync("AppointmentDeleted");
     }
 
    

@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CalendarComponent } from "../../calendar/calendar.component";
 import { AppointmentsService } from '../../_services/appointment.service';
 import { Appointment } from '../../_models/appointment';
 import { CommonModule } from '@angular/common';
 import { MyAppointmentsListComponent } from '../../my-appointments/my-appointments-list/my-appointments-list.component';
+import { MyAppointment } from '../../_models/myAppointment';
 
 @Component({
   selector: 'app-schedule',
@@ -14,17 +15,13 @@ import { MyAppointmentsListComponent } from '../../my-appointments/my-appointmen
 })
 export class ScheduleComponent {
   appointmentService = inject(AppointmentsService);
-  schedule: Appointment[] = [];
+  //schedule: Appointment[] = this.appointmentService.appointments();
+
+  schedule = <Appointment[] | MyAppointment[]>[];
 
   loadSchedule(date: Date){
-    this.appointmentService.getAppointmentsByDate(date).subscribe({
-      next: appointments => {
-        this.schedule = appointments;
-      },
-      error: error => {
-        console.log(error);
-      },
-      complete: () => console.log('Schedule has been loaded!')
-    });
+    const filteredAppointments = this.appointmentService.appointments().filter(x => new Date(x.date).getDate() === date.getDate());
+    this.schedule = filteredAppointments;
+    console.log('Filtering appointments by date');
   }
 }

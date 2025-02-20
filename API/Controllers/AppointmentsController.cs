@@ -139,10 +139,9 @@ namespace API.Controllers
                 return BadRequest("Failed to book the appointment");
             }
 
-            var result = new {
-                Date = appointment.Date
-            };
-
+            var result = mapper.Map<MyAppointmentDto>(appointment);
+            result.CanUpdateOrDelete = AppointmentHelper.CanUpdateOrDelete(appointment.Date);
+            
             return Ok(result);
         }
 

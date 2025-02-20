@@ -18,46 +18,19 @@ import { AppointmentTypePipe } from '../../_pipes/appointment-type.pipe';
 export class MyAppointmentsListComponent implements OnInit {
   appointmentService = inject(AppointmentsService);
   accountService = inject(AccountService)
-  myAppointments = model<MyAppointment[] | Appointment[]>();
+  appointments = model<MyAppointment[] | Appointment[]>(this.appointmentService.appointments());
   modalService = inject(ModalService);
 
   ngOnInit(): void {
-    if(!(this.myAppointments() === undefined))
-      return;
-    
-    console.log('getting appointments');
-
-    if(this.accountService.hasAdminRole()){
-      this.getAppointments();
-    }else{
-      this.getMyAppointments();
-    }
-
     this.appointmentService.appointmentDeleted.subscribe({
       next: (id:number) => {
         this.onAppointmentDeleted(id);
       }
     });
-  }
 
-  getAppointments(){
-    this.appointmentService.getAppointments().subscribe({
-      next: appointments => {
-        this.myAppointments.set(appointments);
-      },
-      error: error => {
-        console.log(error);
-      }
-    });
-  }
-
-  getMyAppointments(){
-    this.appointmentService.getMyAppointments().subscribe({
-      next: appointments => {
-        this.myAppointments.set(appointments);
-      },
-      error: error => {
-        console.log(error);
+    this.appointmentService.appointmentBooked.subscribe({
+      next: () => {
+        this.appointmentService.getMyAppointments();
       }
     });
   }
@@ -66,31 +39,12 @@ export class MyAppointmentsListComponent implements OnInit {
     this.modalService.openUpdateAppointmentModal(appointment);
   }
 
-
-
   openCancelConfirmationModal(appointment: any) {
     this.modalService.openCancelConfirmationModal(appointment);
 
   }
 
   onAppointmentDeleted(id: number) {
-    this.myAppointments()?.map(() => {
-      this.myAppointments()?.filter(x => x.id !== id);
-    });
+    this.appointments.update( apo => apo.filter(x => x.id !== id));
   }
-
-  getHeading(appointment: MyAppointment | Appointment):string{
-    //{{appointment.date | date: 'medium'}}
-    if(this.accountService.hasAdminRole()){
-      appointment = appointment as Appointment;
-      return "{{appointment.date | date: 'medium'}} - {{appointment.user.username | titlecase}}";
-    }else{
-      appointment = appointment as MyAppointment;
-      return "{{appointment.date | date: 'medium'}}";
-    }
-  }
-
-  
-  
-
 }
