@@ -24,7 +24,6 @@ export class NavComponent {
   login(){
     this.accountService.login(this.authentication).subscribe({
       next: response => {
-        console.log(response);
         this.isMenuCollapsed = true;
       },
       error: error => {

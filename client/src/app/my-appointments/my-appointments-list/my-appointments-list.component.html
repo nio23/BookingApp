@@ -1,10 +1,7 @@
 <accordion [isAnimated]="true">
-    @for(appointment of appointments(); track appointment.id){
-        <accordion-group heading = "{{ appointment | appointmentType}}">
-            <button class="btn btn-primary mx-1" (click)="changeAppointment(appointment)" [disabled]="!appointment.canUpdateOrDelete">Update</button>
-            <!-- <button class="btn btn-primary mx-1" (click)="changeAppointment(appointment)">Update</button> -->
-            <button class="btn btn-primary mx-1" (click)="openCancelConfirmationModal(appointment)" [disabled]="!appointment.canUpdateOrDelete">Cancel</button>
-        </accordion-group>
-
-    }
+    <accordion-group *ngFor="let appointment of $appointments | async" heading = "{{ appointment | appointmentType}}">
+        <button class="btn btn-primary mx-1" (click)="changeAppointment(appointment)" [disabled]="!appointment.canUpdateOrDelete">Update</button>
+        <!-- <button class="btn btn-primary mx-1" (click)="changeAppointment(appointment)">Update</button> -->
+        <button class="btn btn-primary mx-1" (click)="openCancelConfirmationModal(appointment)" [disabled]="!appointment.canUpdateOrDelete">Cancel</button>
+    </accordion-group>
 </accordion>

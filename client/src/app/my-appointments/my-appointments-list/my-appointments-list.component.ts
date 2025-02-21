@@ -1,4 +1,4 @@
-import { Component, inject, input, model, OnInit } from '@angular/core';
+import { Component, inject, Input, input, model, OnInit } from '@angular/core';
 import { AccordionComponent, AccordionPanelComponent } from 'ngx-bootstrap/accordion';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { MyAppointment } from '../../_models/myAppointment';
@@ -7,6 +7,7 @@ import { ModalService } from '../../_services/modal.service';
 import { AccountService } from '../../_services/account.service';
 import { Appointment } from '../../_models/appointment';
 import { AppointmentTypePipe } from '../../_pipes/appointment-type.pipe';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-my-appointments-list',
@@ -18,7 +19,7 @@ import { AppointmentTypePipe } from '../../_pipes/appointment-type.pipe';
 export class MyAppointmentsListComponent implements OnInit {
   appointmentService = inject(AppointmentsService);
   accountService = inject(AccountService)
-  appointments = model<MyAppointment[] | Appointment[]>(this.appointmentService.appointments());
+  @Input() $appointments: Observable<Appointment[] | MyAppointment[]> = this.appointmentService.getMyAppointments();
   modalService = inject(ModalService);
 
   ngOnInit(): void {
@@ -29,8 +30,11 @@ export class MyAppointmentsListComponent implements OnInit {
     });
 
     this.appointmentService.appointmentBooked.subscribe({
-      next: () => {
-        this.appointmentService.getMyAppointments();
+      next: (appointment: MyAppointment) => {
+        //this.appointmentService.getMyAppointments();
+        this.$appointments.pipe(
+          map(appointments => appointments.push(appointment))
+        );
       }
     });
   }
@@ -45,6 +49,8 @@ export class MyAppointmentsListComponent implements OnInit {
   }
 
   onAppointmentDeleted(id: number) {
-    this.appointments.update( apo => apo.filter(x => x.id !== id));
+    this.$appointments = this.$appointments.pipe(
+      map(appointments => appointments.filter(x => x.id !== id))
+    );
   }
 }

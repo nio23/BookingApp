@@ -7,7 +7,7 @@ import { User } from '../_models/user';
 import { AccountService } from './account.service';
 import { MyAppointment } from '../_models/myAppointment';
 import { Slot } from '../_models/slot';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,21 +20,13 @@ export class AppointmentsService{
   hubConnection?: HubConnection;
 
   @Output() appointmentDeleted = new EventEmitter<number>();
-  @Output() appointmentBooked = new EventEmitter<Slot>();
+  @Output() appointmentBooked = new EventEmitter<MyAppointment>();
 
-  private _appointments = signal<MyAppointment[] | Appointment[]>([]);
-  get appointments() {
-    return this._appointments;
-  }
   
   private _openTime = new Date();
   private _closeTime = new Date();
   private _appointmentTime = 30;
 
-  
-  // computed(()=> {
-  //   return new Date(this._appointment().setHours(8, 0, 0, 0));
-  // });
   get openTime() {
     this._openTime.setHours(8, 0, 0, 0);
     return this._openTime;
@@ -66,7 +58,6 @@ export class AppointmentsService{
     this.createHubConnection(user);
 
     this.getMyAppointments();
-
   }
 
   createHubConnection(user: User) {
@@ -83,11 +74,11 @@ export class AppointmentsService{
     // });
   }
 
-  private getAppointments(date?: Date) {
+  getAppointments(date?: Date): Observable<MyAppointment[]> {
     if(date) {
-      return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(date));
+      return this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(date));
     }
-    return this.http.get<Appointment[]>(this.baseUrl + 'appointments');
+    return this.http.get<MyAppointment[]>(this.baseUrl + 'appointments');
   }
 
   deleteAppointment(id: number) {
@@ -104,27 +95,9 @@ export class AppointmentsService{
     return this.http.get<Slot[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(date));
   }
 
-  getMyAppointments() {
-    if(this.accountService.hasAdminRole()){
-      this.getAppointments().subscribe({
-        next: appointments => {
-          this._appointments.set(appointments);
-      },
-        error: error => {
-          console.log(error);
-        }
-      });
-    }else{
-      this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/my').subscribe({
-        next: appointments => {
-          this._appointments.set(appointments);
-        },
-        error: error => {
-          console.log(error);
-        }
-      });
-    }
-    
+  getMyAppointments(): Observable<MyAppointment[] | MyAppointment[]> {
+    //console.log('Getting appointments');
+    return this.accountService.hasAdminRole() ? this.getAppointments() : this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/my');    
   }
 
   // async bookAppointment(model: any) {
