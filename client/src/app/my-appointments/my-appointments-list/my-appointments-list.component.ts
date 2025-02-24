@@ -17,12 +17,19 @@ import { map, Observable } from 'rxjs';
   styleUrl: './my-appointments-list.component.css'
 })
 export class MyAppointmentsListComponent implements OnInit {
-  appointmentService = inject(AppointmentsService);
+  private appointmentService = inject(AppointmentsService);
   accountService = inject(AccountService)
   @Input() $appointments: Observable<Appointment[] | MyAppointment[]> = this.appointmentService.getMyAppointments();
-  modalService = inject(ModalService);
+  appointments: (Appointment[] | MyAppointment[]) =[];
+  private modalService = inject(ModalService);
 
   ngOnInit(): void {
+    this.$appointments.subscribe({
+      next: (appointments) => {
+        this.appointments = appointments;
+      }
+    });
+    console.log("Appointment list init");
     this.appointmentService.appointmentDeleted.subscribe({
       next: (id:number) => {
         this.onAppointmentDeleted(id);
