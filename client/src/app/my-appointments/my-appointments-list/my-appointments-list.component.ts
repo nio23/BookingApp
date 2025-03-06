@@ -20,16 +20,9 @@ export class MyAppointmentsListComponent implements OnInit {
   private appointmentService = inject(AppointmentsService);
   accountService = inject(AccountService)
   @Input() $appointments: Observable<Appointment[] | MyAppointment[]> = this.appointmentService.getMyAppointments();
-  appointments: (Appointment[] | MyAppointment[]) =[];
   private modalService = inject(ModalService);
 
   ngOnInit(): void {
-    this.$appointments.subscribe({
-      next: (appointments) => {
-        this.appointments = appointments;
-      }
-    });
-    console.log("Appointment list init");
     this.appointmentService.appointmentDeleted.subscribe({
       next: (id:number) => {
         this.onAppointmentDeleted(id);

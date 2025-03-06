@@ -19,6 +19,7 @@ export class ScheduleComponent{
   $schedule = new Observable<Appointment[] | Appointment[]>();
 
   loadSchedule(date: Date){
+    console.log("Loading schedule for date: ", date);
     this.$schedule = this.appointmentService.getAppointmentsByDate(date);
   }
 }
