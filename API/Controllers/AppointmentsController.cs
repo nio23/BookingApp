@@ -68,8 +68,6 @@ namespace API.Controllers
                 currentSlot = currentSlot.AddMinutes(appointmentTime);
             }
 
-            if(!freeSlots.Any())
-                return NotFound("There are no free slots for this date");
             return Ok(freeSlots);
         }
 
