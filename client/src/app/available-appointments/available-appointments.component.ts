@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AppointmentsService } from '../_services/appointment.service';
 import { Appointment } from '../_models/appointment';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,7 @@ import { Slot } from '../_models/slot';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CalendarComponent } from "../calendar/calendar.component";
+import { MyAppointment } from '../_models/myAppointment';
 
 @Component({
   selector: 'app-available-appointments',
@@ -31,8 +32,10 @@ export class AvailableAppointmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.appointmentService.appointmentBooked.subscribe({
-      next: (slot: Slot) => {
-        this.freeSlots = this.freeSlots.filter(x => x.date !== slot.date);
+      next: (myAppointment: MyAppointment) => {
+        this.freeSlots = this.freeSlots.filter(x => {
+          return !this.isTheSameDate(x.date, myAppointment.date);
+        });
       }
     });
   }
@@ -80,8 +83,14 @@ export class AvailableAppointmentsComponent implements OnInit {
   }
 
 
-  isTheSameDate(first: Date, second: Date): boolean {
-    return first.getUTCDate() === second.getUTCDate() && first.getUTCMonth() === second.getUTCMonth() && first.getUTCFullYear() === second.getUTCFullYear();
+  isTheSameDate(first: Date | string, second: Date | string): boolean {
+    if(typeof first === 'string') first = new Date(first);
+    if(typeof second === 'string') second = new Date(second);
+    return first.getUTCDate() === second.getUTCDate() 
+      && first.getUTCMonth() === second.getUTCMonth() 
+      && first.getUTCFullYear() === second.getUTCFullYear()
+      && first.getUTCHours() === second.getUTCHours()
+      && first.getUTCMinutes() === second.getUTCMinutes();
   }
 
 }

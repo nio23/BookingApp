@@ -42,19 +42,29 @@ export class BookingConfirmation implements OnInit {
 
   book(){
     console.log(this.bookForm.value.date);
-    this.appointmentService.bookAppointment(this.bookForm.value).subscribe({
-      next: (appo: any) => {
-        console.log(appo);
+    this.appointmentService.bookAppointmentWs(this.bookForm.value).then(
+      () => {
         this.modalService.hideModal();
-        this.appointmentService.appointmentBooked.emit(appo);
+        //this.appointmentService.appointmentBooked.emit(appo);
         this.toastr.success('Appointment booked successfully');
-      },
-      error: error => {
-        this.validationError = error.error;
+      }).catch((error: any) => {
         console.log(error);
-      }
+        this.validationError = error.error;
+        //this.toastr.error('Failed to book appointment');
+      })
+    // this.appointmentService.bookAppointment(this.bookForm.value).subscribe({
+    //   next: (appo: any) => {
+    //     console.log(appo);
+    //     this.modalService.hideModal();
+    //     this.appointmentService.appointmentBooked.emit(appo);
+    //     this.toastr.success('Appointment booked successfully');
+    //   },
+    //   error: error => {
+    //     this.validationError = error.error;
+    //     console.log(error);
+    //   }
       
-    });
+    // });
   }
   
 }

@@ -7,7 +7,8 @@ import { ModalService } from '../../_services/modal.service';
 import { AccountService } from '../../_services/account.service';
 import { Appointment } from '../../_models/appointment';
 import { AppointmentTypePipe } from '../../_pipes/appointment-type.pipe';
-import { map, Observable } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
+import { NotExpr } from '@angular/compiler';
 
 @Component({
   selector: 'app-my-appointments-list',
@@ -18,8 +19,7 @@ import { map, Observable } from 'rxjs';
 })
 export class MyAppointmentsListComponent implements OnInit {
   private appointmentService = inject(AppointmentsService);
-  accountService = inject(AccountService)
-  @Input() $appointments: Observable<Appointment[] | MyAppointment[]> = this.appointmentService.getMyAppointments();
+  appointments = model<Appointment[] | MyAppointment[]>();
   private modalService = inject(ModalService);
 
   ngOnInit(): void {
@@ -29,14 +29,20 @@ export class MyAppointmentsListComponent implements OnInit {
       }
     });
 
+    if(this.appointments() === undefined){
+      this.appointmentService.getMyAppointments().subscribe({
+        next: appointments => {
+          this.appointments.set(appointments);
+        }
+      });
+    }
+
     this.appointmentService.appointmentBooked.subscribe({
       next: (appointment: MyAppointment) => {
-        //this.appointmentService.getMyAppointments();
-        this.$appointments.pipe(
-          map(appointments => appointments.push(appointment))
-        );
+        this.appointments.update(appointments => appointments?.concat(appointment));
       }
     });
+
   }
 
   changeAppointment(appointment: any) {
@@ -49,8 +55,6 @@ export class MyAppointmentsListComponent implements OnInit {
   }
 
   onAppointmentDeleted(id: number) {
-    this.$appointments = this.$appointments.pipe(
-      map(appointments => appointments.filter(x => x.id !== id))
-    );
+    this.appointments.update(appointments => appointments?.filter(x => x.id !== id));
   }
 }

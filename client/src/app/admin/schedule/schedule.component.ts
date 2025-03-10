@@ -16,10 +16,16 @@ import { map, Observable } from 'rxjs';
 })
 export class ScheduleComponent{
   appointmentService = inject(AppointmentsService);
-  $schedule = new Observable<Appointment[] | Appointment[]>();
+  //$schedule = new Observable<Appointment[] | Appointment[]>();
+  schedule = signal<Appointment[] | Appointment[]>([]);
 
   loadSchedule(date: Date){
     console.log("Loading schedule for date: ", date);
-    this.$schedule = this.appointmentService.getAppointmentsByDate(date);
+    this.appointmentService.getAppointmentsByDate(date).subscribe({
+      next: appointments => {
+        this.schedule.set(appointments);
+      }
+    });
+    //this.schedule.set = this.appointmentService.getAppointmentsByDate(date);
   }
 }

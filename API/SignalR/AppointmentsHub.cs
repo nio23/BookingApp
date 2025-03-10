@@ -37,7 +37,7 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
             throw new HubException(errorMsg);
         }
 
-        if(await appointmentRepository.AppointmentExistsAsync(createAppointmentDto.Date))
+        if(await appointmentRepository.AppointmentExistsAsync(parsedDate))
         {
             throw new HubException("There is already an appointment at this time");
         }
@@ -71,6 +71,11 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
         if(appointment.AppUserId != userId)
         {
             throw new HubException("You are not authorized to delete this appointment");
+        }
+
+        if(!AppointmentHelper.CanUpdateOrDelete(appointment.Date))
+        {
+            throw new HubException("You can't cancel an appointment in the past or within 10 minutes of the appointment time");
         }
 
         appointmentRepository.DeleteAppointment(appointment);

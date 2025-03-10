@@ -56,8 +56,6 @@ export class AppointmentsService{
     const user = this.accountService.currentUser();
     if(!user) return;
     this.createHubConnection(user);
-
-    this.getMyAppointments();
   }
 
   createHubConnection(user: User) {
@@ -68,10 +66,11 @@ export class AppointmentsService{
       .withAutomaticReconnect()
       .build();
 
-    // this.hubConnection.start().catch(error => console.log(error));
-    // this.hubConnection.on('NewAppointment', appointment => {
-    //   console.log('Appointments updated from hub'+appointment);
-    // });
+    this.hubConnection.start().catch(error => console.log(error));
+    this.hubConnection.on('NewAppointment', appointment => {
+      console.log('New appointment added');
+      this.appointmentBooked.emit(appointment);
+    });
   }
 
   getAppointments(date?: Date): Observable<MyAppointment[]> {
@@ -100,9 +99,9 @@ export class AppointmentsService{
     return this.accountService.hasAdminRole() ? this.getAppointments() : this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/my');    
   }
 
-  // async bookAppointment(model: any) {
-  //   return this.hubConnection?.invoke('AddAppointment', model);
-  // }
+  async bookAppointmentWs(model: any) {
+    return this.hubConnection?.invoke('AddAppointment', model);
+  }
 
   bookAppointment(model: any) {
     return this.http.post<Slot>(this.baseUrl + 'appointments/new', model);

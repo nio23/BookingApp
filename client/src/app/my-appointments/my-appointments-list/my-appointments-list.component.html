@@ -1,12 +1,11 @@
-@let appointments = $appointments | async;
-
-@if (appointments) {
+@if (appointments()) {
     <accordion [isAnimated]="true">
-        <accordion-group *ngFor="let appointment of appointments" heading = "{{ appointment | appointmentType}}">
-            <button class="btn btn-primary mx-1" (click)="changeAppointment(appointment)" [disabled]="!appointment.canUpdateOrDelete">Update</button>
-            <!-- <button class="btn btn-primary mx-1" (click)="changeAppointment(appointment)">Update</button> -->
-            <button class="btn btn-primary mx-1" (click)="openCancelConfirmationModal(appointment)" [disabled]="!appointment.canUpdateOrDelete">Cancel</button>
-        </accordion-group>
+        @for (appointment of appointments(); track $index) {
+            <accordion-group heading="{{ appointment | appointmentType }}">
+                <button class="btn btn-primary mx-1" (click)="changeAppointment(appointment)" [disabled]="!appointment.canUpdateOrDelete">Update</button>
+                <button class="btn btn-primary mx-1" (click)="openCancelConfirmationModal(appointment)" [disabled]="!appointment.canUpdateOrDelete">Cancel</button>
+            </accordion-group>
+        }
     </accordion>
 }@else{
     <div class="alert alert-info">No appointments today</div>
