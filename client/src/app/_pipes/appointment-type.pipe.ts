@@ -12,7 +12,7 @@ export class AppointmentTypePipe implements PipeTransform {
   titleCasePipe = new TitleCasePipe();
   
   transform(value: MyAppointment | Appointment): string {
-    const date = this.datePipe.transform(value.date, 'medium');
+    const date = this.datePipe.transform(value.date, 'medium', 'UTC+02:00');
 
     if('user' in value){
       const adminAppointment = value as Appointment;

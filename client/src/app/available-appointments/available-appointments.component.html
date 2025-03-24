@@ -10,7 +10,7 @@
     @for (item of freeSlots; track $index) {
       <div class=" col-sm-4 col-md-3 col-6">
         <button type="button" class="btn btn-outline-secondary text-nowrap m-1" (click)="openModal(item)">
-          {{item.date | date: 'shortTime'}}
+          {{item.date | date: 'shortTime':'UTC+02:00'}}
         </button> 
       </div>
     }

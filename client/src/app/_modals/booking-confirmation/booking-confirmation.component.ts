@@ -1,11 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { DatePipe, TitleCasePipe} from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { ModalService } from '../../_services/modal.service';
 import { ToastrService } from 'ngx-toastr';
-import { Slot } from '../../_models/slot';
 
 @Component({
   selector: 'app-modal',
@@ -38,7 +36,7 @@ export class BookingConfirmation implements OnInit {
       date: [this.time, Validators.required],
       clientName: [this.clientName, [Validators.required, Validators.minLength(3), Validators.maxLength(30)]]    
     });
-  }
+  } 
 
   book(){
     console.log(this.bookForm.value.date);
@@ -66,5 +64,5 @@ export class BookingConfirmation implements OnInit {
       
     // });
   }
-  
+
 }
