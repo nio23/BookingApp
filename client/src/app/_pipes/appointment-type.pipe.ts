@@ -1,5 +1,4 @@
-import { inject, Pipe, PipeTransform } from '@angular/core';
-import { MyAppointment } from '../_models/myAppointment';
+import { Pipe, PipeTransform } from '@angular/core';
 import { Appointment } from '../_models/appointment';
 import { DatePipe, TitleCasePipe } from '@angular/common';
 
@@ -11,16 +10,16 @@ export class AppointmentTypePipe implements PipeTransform {
   datePipe = new DatePipe('en-US');
   titleCasePipe = new TitleCasePipe();
   
-  transform(value: MyAppointment | Appointment): string {
+  transform(value: Appointment): string {
     const date = this.datePipe.transform(value.date, 'medium', 'UTC+02:00');
+    const name = 'clientName' in value ? value.clientName : value.user?.username;
+  
+    if(name === undefined)
+      return `${date}`;
 
-    if('user' in value){
-      const adminAppointment = value as Appointment;
-      const titlecase = this.titleCasePipe.transform(adminAppointment.user?.username ?? 'Unknown User');
-      return `${date} - ${titlecase}`;
-    }
+    const titlecase = this.titleCasePipe.transform(name);
+    return `${date} - ${titlecase}`;
 
-    return `${date}`;
     
   }
 }

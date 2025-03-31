@@ -11,7 +11,7 @@
         <p>{{clientName | titlecase }}, would you like to book the appointment?</p>
       </div>
     </div>
-    <!-- <div class="row">
+    <div *ngIf="accountService.hasAdminRole()" class="row">
       <div class="col">
         <input 
           type="text" 
@@ -25,7 +25,7 @@
         <div *ngIf="bookForm.get('clientName')?.hasError('minlength')" class="invalid-feedback">Name must be at least 3 characters</div>
         <div *ngIf="bookForm.get('clientName')?.hasError('maxlength')" class="invalid-feedback">Name must be at most 30 characters </div>
       </div>
-    </div> -->
+    </div>
   </div>
   @if (validationError) {
     <div class="row">

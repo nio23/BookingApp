@@ -5,4 +5,5 @@ export interface Appointment {
     date: Date
     canUpdateOrDelete?: boolean
     user?: Member
+    clientName?: string
 }

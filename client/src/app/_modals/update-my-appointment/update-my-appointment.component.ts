@@ -6,7 +6,7 @@ import { AppointmentsService } from '../../_services/appointment.service';
 import { filter, first, map } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Slot } from '../../_models/slot';
-import { MyAppointment } from '../../_models/myAppointment';
+import { Appointment } from '../../_models/appointment';
 
 @Component({
   selector: 'app-update-my-appointment',
@@ -19,7 +19,7 @@ export class UpdateMyAppointmentComponent implements OnInit {
   modalService = inject(ModalService);
   appointmentService = inject(AppointmentsService);
 
-  myAppointment?: MyAppointment;
+  myAppointment?: Appointment;
   freeSlots: Slot[] = [];
   selectedSlot: Slot | null = null;
   httpErrors: string[] | undefined;

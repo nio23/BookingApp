@@ -4,7 +4,6 @@ import { AppointmentsService } from '../../_services/appointment.service';
 import { Appointment } from '../../_models/appointment';
 import { CommonModule } from '@angular/common';
 import { MyAppointmentsListComponent } from '../../my-appointments/my-appointments-list/my-appointments-list.component';
-import { MyAppointment } from '../../_models/myAppointment';
 import { map, Observable } from 'rxjs';
 
 @Component({

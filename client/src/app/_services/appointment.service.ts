@@ -5,7 +5,6 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { environment } from '../../environments/environment';
 import { User } from '../_models/user';
 import { AccountService } from './account.service';
-import { MyAppointment } from '../_models/myAppointment';
 import { Slot } from '../_models/slot';
 import { Observable, tap } from 'rxjs';
 
@@ -20,7 +19,7 @@ export class AppointmentsService{
   hubConnection?: HubConnection;
 
   @Output() appointmentDeleted = new EventEmitter<number>();
-  @Output() appointmentBooked = new EventEmitter<MyAppointment>();
+  @Output() appointmentBooked = new EventEmitter<Appointment>();
 
   
   private _openTime = new Date();
@@ -73,11 +72,11 @@ export class AppointmentsService{
     });
   }
 
-  getAppointments(date?: Date): Observable<MyAppointment[]> {
+  getAppointments(date?: Date): Observable<Appointment[]> {
     if(date) {
-      return this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(date));
+      return this.http.get<Appointment[]>(this.baseUrl + 'appointments/' + this.toISOOnlyDayString(date));
     }
-    return this.http.get<MyAppointment[]>(this.baseUrl + 'appointments');
+    return this.http.get<Appointment[]>(this.baseUrl + 'appointments');
   }
 
   deleteAppointment(id: number) {
@@ -94,9 +93,9 @@ export class AppointmentsService{
     return this.http.get<Slot[]>(this.baseUrl + 'appointments/free/' + this.toISOOnlyDayString(date));
   }
 
-  getMyAppointments(): Observable<MyAppointment[] | MyAppointment[]> {
+  getMyAppointments(): Observable<Appointment[]> {
     //console.log('Getting appointments');
-    return this.accountService.hasAdminRole() ? this.getAppointments() : this.http.get<MyAppointment[]>(this.baseUrl + 'appointments/my');    
+    return this.accountService.hasAdminRole() ? this.getAppointments() : this.http.get<Appointment[]>(this.baseUrl + 'appointments/my');    
   }
 
   async bookAppointmentWs(model: any) {
@@ -107,7 +106,7 @@ export class AppointmentsService{
     return this.http.post<Slot>(this.baseUrl + 'appointments/new', model);
   }
 
-  updateAppointment(model: MyAppointment) {
+  updateAppointment(model: Appointment) {
     return this.http.put(this.baseUrl + 'appointments/', model);
   }
 

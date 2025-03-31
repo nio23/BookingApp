@@ -7,7 +7,6 @@ import { Slot } from '../_models/slot';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CalendarComponent } from "../calendar/calendar.component";
-import { MyAppointment } from '../_models/myAppointment';
 
 @Component({
   selector: 'app-available-appointments',
@@ -32,7 +31,7 @@ export class AvailableAppointmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.appointmentService.appointmentBooked.subscribe({
-      next: (myAppointment: MyAppointment) => {
+      next: (myAppointment: Appointment) => {
         this.freeSlots = this.freeSlots.filter(x => {
           return !this.isTheSameDate(x.date, myAppointment.date);
         });
@@ -60,17 +59,6 @@ export class AvailableAppointmentsComponent implements OnInit {
   UTCToLocal(utcDate: Date): Date {
     const offset = new Date().getTimezoneOffset();
     return new Date(utcDate.getTime() - offset * 60000);
-  }
-
-  loadEmptySchedule(): Appointment[] {
-    const schedule:Appointment[] = [];
-    const numberOfAppointmentsOnDay = (this.getDayTimeOnMinutes(this.closeTime) - this.getDayTimeOnMinutes(this.openTime))/this.appointmentTime;
-    for(let i = 0; i < numberOfAppointmentsOnDay; i++){
-      const d = new Date(this.openTime);
-      d.setMinutes(d.getMinutes()+this.appointmentTime * i);
-      schedule.push({date: d});
-    }
-    return schedule;
   }
 
   getDayTimeOnMinutes(date: Date): number {

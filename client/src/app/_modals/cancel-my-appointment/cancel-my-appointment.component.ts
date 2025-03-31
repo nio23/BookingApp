@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { MyAppointment } from '../../_models/myAppointment';
 import { AppointmentsService } from '../../_services/appointment.service';
 import { ModalService } from '../../_services/modal.service';
 import { ToastrService } from 'ngx-toastr';
+import { Appointment } from '../../_models/appointment';
 
 @Component({
   selector: 'app-cancel-my-appointment',
@@ -16,7 +16,7 @@ export class CancelMyAppointmentComponent implements OnInit {
   private toastr = inject(ToastrService);
   modalService = inject(ModalService);
   appointmentService = inject(AppointmentsService);
-  appointment?: MyAppointment;
+  appointment?: Appointment;
   error: string | undefined;
 
   ngOnInit(): void {
@@ -24,7 +24,12 @@ export class CancelMyAppointmentComponent implements OnInit {
   }
 
   cancelAppointment() {
-    this.appointmentService.deleteAppointment(this.appointment!!.id).subscribe({
+    if (this.appointment?.id === undefined){
+      console.log("Appointment id is undefined");
+      return;
+    } 
+
+    this.appointmentService.deleteAppointment(this.appointment.id).subscribe({
       next: () => {
         console.log('Appointment deleted');
         //this.appointmentService.appointmentDeleted.emit(this.appointment!!.id);

@@ -44,7 +44,8 @@ public class AppointmentsHub(IAppointmentRepository appointmentRepository, IMapp
 
         var appointment = new Appointment{
             Date = parsedDate,
-            AppUserId = userId
+            AppUserId = userId,
+            ClientName = createAppointmentDto.ClientName
         };
 
         appointmentRepository.AddAppointment(appointment);

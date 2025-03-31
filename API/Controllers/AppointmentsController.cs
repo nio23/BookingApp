@@ -127,7 +127,8 @@ namespace API.Controllers
 
             var appointment = new Appointment{
                 Date = parsedDate,
-                AppUserId = user
+                AppUserId = user,
+                ClientName = createAppointmentDto.ClientName
             };
 
             appointmentRepository.AddAppointment(appointment);
