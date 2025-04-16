@@ -26,6 +26,7 @@ public static class IdentityServiceExtensions
             .AddGoogle(options => {
                 options.ClientId = config["Authentication:Google:ClientId"] ?? throw new Exception("Google Client ID not found");
                 options.ClientSecret = config["Authentication:Google:ClientSecret"] ?? throw new Exception("Google Client Secret not found");
+                
             })
             .AddJwtBearer(options => 
             {
