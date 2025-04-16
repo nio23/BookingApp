@@ -23,6 +23,10 @@ public static class IdentityServiceExtensions
         .AddEntityFrameworkStores<DataContext>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddGoogle(options => {
+                options.ClientId = config["Authentication:Google:ClientId"] ?? throw new Exception("Google Client ID not found");
+                options.ClientSecret = config["Authentication:Google:ClientSecret"] ?? throw new Exception("Google Client Secret not found");
+            })
             .AddJwtBearer(options => 
             {
                 var tokenKey = config["TokenKey"] ?? throw new Exception("Token key not found");
@@ -44,6 +48,7 @@ public static class IdentityServiceExtensions
                     }
                 };
             });
+            
         return services;
     }
 }

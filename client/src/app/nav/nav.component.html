@@ -8,14 +8,36 @@
     </button>
     <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse mt-2" id="navbarSupportedContent">
       @if(!accountService.currentUser()){
-      <form class="d-flex flex-md-row flex-column align-items-end ms-auto" (ngSubmit)="login()">
-        <input class="form-control me-md-2 my-1" name="username" [(ngModel)]="authentication.username"
-          placeholder="Username">
-        <input class="form-control me-md-2 my-1" name="password" [(ngModel)]="authentication.password" type="password"
-          placeholder="Password">
-        <button class="btn btn-outline-success my-1 mx-1" type="submit">Login</button>
-        <button class="btn btn-outline-secondary my-1 mx-1" type="button" routerLink="/register">Register</button>
-      </form>
+        <form class="d-flex flex-md-row flex-column align-items-end ms-auto" (ngSubmit)="login()">
+          <input class="form-control me-md-2 my-1" name="username" [(ngModel)]="authentication.username"
+            placeholder="Username">
+          <input class="form-control me-md-2 my-1" name="password" [(ngModel)]="authentication.password" type="password"
+            placeholder="Password">
+          <button class="btn btn-outline-success my-1 mx-1" type="submit">Login</button>
+          <button class="btn btn-outline-secondary my-1 mx-1" type="button" routerLink="/register">Register</button>
+          
+          <div id="g_id_onload"
+            data-client_id="209285819410-c6mo02unun40slvv61d7ev2jn4319un7.apps.googleusercontent.com"
+            data-context="signin"
+            data-ux_mode="popup"
+            data-login_uri="https://localhost:4200/login"
+            data-auto_prompt="false"
+            data-use_fedcm_for_prompt="true"
+            data-use_fedcm_for_button="true"
+            >
+        </div>
+
+          <div class="g_id_signin"
+            data-type="icon"
+            data-shape="square"
+            data-theme="outline"
+            data-logo_alignment="center"
+            data-text=""
+            data-size="large">
+          </div>
+        </form>
+        
+        
       }@else {
         <div class="container-fluid">
           <div class="d-flex flex-md-row flex-column align-items-md-start align-items-end">
