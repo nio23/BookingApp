@@ -1,13 +1,11 @@
-using API.Data;
 using API.Dtos;
 using API.Entities;
 using API.Interfaces;
 using AutoMapper;
-using Google.Apis.Auth;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Google.Apis.Auth;
 
 namespace API.Controllers
 {
@@ -58,14 +56,13 @@ namespace API.Controllers
         }
 
         [HttpPost("google-login")]
-        public async Task<ActionResult<UserDto>> GoogleLogin(string credential){
+        public async Task<ActionResult<UserDto>> GoogleLogin(SocialUserDto socialUserDto){
 
-            GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(credential);
             
-            var user = await userManager.FindByEmailAsync(payload.Email);
+            var user = await userManager.FindByEmailAsync(socialUserDto.Email);
 
             if(user == null){
-                var username = payload.GivenName.ToLower().Replace(" ", "");
+                var username = socialUserDto.Name.ToLower().Replace(" ", "");
                 string uniqueUsername = username;
 
                 while(await UserExists(uniqueUsername)){
@@ -74,7 +71,7 @@ namespace API.Controllers
 
                 user = new AppUser{
                     UserName = uniqueUsername,
-                    Email = payload.Email
+                    Email = socialUserDto.Email
                 };
 
                 var result = await userManager.CreateAsync(user);

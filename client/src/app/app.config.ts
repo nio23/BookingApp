@@ -8,6 +8,7 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { jwtInterceptor } from './_interceptors/jwt.interceptor';
 import { provideToastr } from 'ngx-toastr';
 import { errorInterceptor } from './_interceptors/error.interceptor';
+import { SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 
 
 
@@ -19,6 +20,23 @@ export const appConfig: ApplicationConfig = {
     provideToastr({
       positionClass: 'toast-bottom-right'
     }),
-    importProvidersFrom([ModalModule.forRoot(), TimepickerModule.forRoot()])
+    importProvidersFrom([ModalModule.forRoot(), TimepickerModule.forRoot()]),
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '209285819410-c6mo02unun40slvv61d7ev2jn4319un7.apps.googleusercontent.com'
+            )
+          }
+        ],
+        onError: (error) => {
+          console.error(error);
+        }
+      } as SocialAuthServiceConfig
+    }
   ]
 };

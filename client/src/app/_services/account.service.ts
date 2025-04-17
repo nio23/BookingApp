@@ -8,6 +8,7 @@ import { map } from 'rxjs';
   providedIn: 'root'
 })
 export class AccountService {
+  
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null);
@@ -42,6 +43,16 @@ export class AccountService {
 
   register(model: any) {
     return this.http.post<User>(this.baseUrl+'account/register', model).pipe(
+      map(user => {
+        if (user) {
+          this.setCurrentUser(user);
+        }
+      })
+    );
+  }
+
+  loginWithGoogle(response: any) {
+    return this.http.post<User>(this.baseUrl+'account/google-login', response).pipe(
       map(user => {
         if (user) {
           this.setCurrentUser(user);
