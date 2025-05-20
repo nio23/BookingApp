@@ -9,13 +9,16 @@
     <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse mt-2" id="navbarSupportedContent">
       @if(!accountService.currentUser()){
         <form class="d-flex flex-md-row flex-column align-items-end ms-auto" (ngSubmit)="login()">
-          <input class="form-control me-md-2 my-1" name="username" [(ngModel)]="authentication.username"
+          <input class="form-control me-md-2 my-1 my-md-0" name="username" [(ngModel)]="authentication.username"
             placeholder="Username">
-          <input class="form-control me-md-2 my-1" name="password" [(ngModel)]="authentication.password" type="password"
+          <input class="form-control me-md-2 my-1 my-md-0" name="password" [(ngModel)]="authentication.password" type="password"
             placeholder="Password">
-          <button class="btn btn-outline-success my-1 mx-1" type="submit">Login</button>
-          <button class="btn btn-outline-secondary my-1 mx-1" type="button" routerLink="/register">Register</button>
-          <asl-google-signin-button type="icon" size="large"></asl-google-signin-button>
+          <button class="btn btn-outline-success my-1 my-md-0 mx-1" type="submit">Login</button>
+          <button class="btn btn-outline-secondary my-1 my-md-0 mx-1" type="button" routerLink="/register">Register</button>
+          <div style="color-scheme: light;" class="my-1 my-md-auto me-md-2 align-self-center">
+            <asl-google-signin-button type="icon" size="large" theme="outline" logo_alignment="center"></asl-google-signin-button>
+          </div>
+          
         </form>
         
         
